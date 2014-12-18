@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Profile details" >
+
+        <EditTextPreference
+            android:key="PREFERENCE_PROFILE_NAME"
+            android:title="Profile name"
+            android:summary="Set the name of the profile" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Display" >
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Sound" >
+
+        <RingtonePreference
+            android:title="Ringtone"
+            android:key="PREFERENCE_RINGTONE"
+            android:ringtoneType="ringtone" />
+
+        <RingtonePreference
+            android:title="Notification tone"
+            android:key="PREFERENCE_NOTIFICATION_TONE"
+            android:ringtoneType="notification" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="System" >
+
+        <CheckBoxPreference
+            android:key="PREFERENCE_DIAL_PAD_TOUCH_TONES"
+            android:title="Dial pad touch tones"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="PREFERENCE_TOUCH_SOUNDS"
+            android:title="Touch sounds"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="PREFERENCE_SCREEN_LOCK_SOUND"
+            android:title="Screen lock sounds"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="VIBRATE_ON_TOUCH"
+            android:title="Vibrate on touch"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Wifi/Data" >
+
+        <CheckBoxPreference
+            android:title="Wifi"
+            android:key="PREFERENCE_WIFI_STATE"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Location" >
+
+    </PreferenceCategory>
+</PreferenceScreen>

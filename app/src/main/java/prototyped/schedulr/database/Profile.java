@@ -4,7 +4,7 @@ public class Profile
 {
     public String PROFILE_NAME;
     public String PROFILE_COLOR;
-    public int PROFILE_ICON_ID;
+    public String PROFILE_ICON;
     public String SOUND_RINGTONE;
     public int SOUND_RING_MODE;
     public String SOUND_NOTIFICATION_TONE;
@@ -19,7 +19,7 @@ public class Profile
     {
         this.PROFILE_NAME = "New Profile";
         this.PROFILE_COLOR = "#ffffff";
-        this.PROFILE_ICON_ID = 0;
+        this.PROFILE_ICON = "";
         this.SOUND_RINGTONE = "";
         this.SOUND_RING_MODE = 2;
         this.SOUND_NOTIFICATION_TONE = "";

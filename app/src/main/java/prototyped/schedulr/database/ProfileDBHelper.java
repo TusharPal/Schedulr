@@ -24,7 +24,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
     private final String DATABASE_CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "("
                                                         + COLUMN_PROFILE_NAME + " TEXT PRIMARY KEY,"
                                                         + COLUMN_PROFILE_COLOR + " TEXT NOT NULL,"
-                                                        + COLUMN_PROFILE_ICON + " INTEGER NOT NULL,"
+                                                        + COLUMN_PROFILE_ICON + " TEXT NOT NULL,"
                                                         + COLUMN_SOUND_RINGTONE + " STRING NOT NULL,"
                                                         + COLUMN_SOUND_RING_MODE + " INTEGER NOT NULL,"
                                                         + COLUMN_SOUND_NOTIFICATION_TONE + " STRING NOT NULL,"

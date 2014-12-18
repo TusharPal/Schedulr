@@ -44,7 +44,7 @@ public class ProfileDBDataSource
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
         values.put(ProfileDBHelper.COLUMN_PROFILE_COLOR, profile.PROFILE_COLOR);
-        values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON_ID);
+        values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
         values.put(ProfileDBHelper.COLUMN_SOUND_RINGTONE, profile.SOUND_RINGTONE);
         values.put(ProfileDBHelper.COLUMN_SOUND_RING_MODE, profile.SOUND_RING_MODE);
         values.put(ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE, profile.SOUND_NOTIFICATION_TONE);
@@ -61,7 +61,7 @@ public class ProfileDBDataSource
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
         values.put(ProfileDBHelper.COLUMN_PROFILE_COLOR, profile.PROFILE_COLOR);
-        values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON_ID);
+        values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
         values.put(ProfileDBHelper.COLUMN_SOUND_RINGTONE, profile.SOUND_RINGTONE);
         values.put(ProfileDBHelper.COLUMN_SOUND_RING_MODE, profile.SOUND_RING_MODE);
         values.put(ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE, profile.SOUND_NOTIFICATION_TONE);
@@ -110,7 +110,7 @@ public class ProfileDBDataSource
 
         profile.PROFILE_NAME = cursor.getString(0);
         profile.PROFILE_COLOR = cursor.getString(1);
-        profile.PROFILE_ICON_ID = cursor.getInt(2);
+        profile.PROFILE_ICON = cursor.getString(2);
         profile.SOUND_RINGTONE = cursor.getString(3);
         profile.SOUND_RING_MODE = cursor.getInt(4);
         profile.SOUND_NOTIFICATION_TONE = cursor.getString(5);
