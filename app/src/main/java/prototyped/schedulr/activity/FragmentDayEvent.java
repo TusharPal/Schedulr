@@ -16,7 +16,7 @@ public class FragmentDayEvent extends Fragment
     public static final FragmentDayEvent newInstance(int position, String dayName)
     {
         FragmentDayEvent fragmentDayEvent = new FragmentDayEvent();
-        Bundle args = fragmentDayEvent.getArguments();
+        Bundle args = new Bundle();
         args.putInt(FRAGMENT_POSITION, position);
         args.putString(FRAGMENT_NAME, dayName);
         fragmentDayEvent.setArguments(args);

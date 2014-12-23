@@ -5,56 +5,172 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <GridView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:rowCount="4"
-        android:columnCount="5"
-        android:numColumns="5">
 
-        <Button
-            android:id="@+id/button_00_dialogpreference_profile_color"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_row="0"
-            android:layout_rowSpan="1"
-            android:layout_column="0"
-            android:layout_columnSpan="1"
-            android:layout_margin="16dp"
-            android:background="@android:color/holo_blue_light"/>
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*">
 
-        <Button
-            android:id="@+id/button_01_dialogpreference_profile_color"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_row="0"
-            android:layout_rowSpan="1"
-            android:layout_column="1"
-            android:layout_columnSpan="1"
-            android:layout_margin="16dp"
-            android:background="@android:color/holo_blue_light"/>
+        <TableRow
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:layout_gravity="center">
 
-        <Button
-            android:id="@+id/button_02_dialogpreference_profile_color"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_row="0"
-            android:layout_rowSpan="2"
-            android:layout_column="2"
-            android:layout_columnSpan="1"
-            android:layout_margin="16dp"
-            android:background="@android:color/holo_blue_light"/>
+            <Button
+                android:id="@+id/button_00_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
 
-        <Button
-            android:id="@+id/button_10_dialogpreference_profile_color"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_row="1"
-            android:layout_rowSpan="1"
-            android:layout_column="0"
-            android:layout_columnSpan="1"
-            android:layout_margin="16dp"
-            android:background="@android:color/holo_blue_light"/>
-    </GridView>
+            <Button
+                android:id="@+id/button_01_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_02_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_03_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_04_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/button_10_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_11_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_12_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+            <Button
+                android:id="@+id/button_13_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_14_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/button_20_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_21_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_22_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+            <Button
+                android:id="@+id/button_23_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_24_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/button_30_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_31_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_32_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+            <Button
+                android:id="@+id/button_33_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+            <Button
+                android:id="@+id/button_34_dialogpreference_profile_color"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"/>
+        </TableRow>
+    </TableLayout>
 </LinearLayout>
 

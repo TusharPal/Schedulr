@@ -8,22 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import adapter.EventFragmentPagerAdapter;
-import adapter.ScheduleFragmentPagerAdapter;
+import prototyped.schedulr.adapter.EventFragmentPagerAdapter;
+import prototyped.schedulr.adapter.ScheduleFragmentPagerAdapter;
 import prototyped.schedulr.R;
 
 public class FragmentViewPagerWeek extends Fragment
 {
-    private static String NAVIGATION_DRAWER_POSITION = "POSITION";
+    private static final String NAVIGATION_DRAWER_POSITION = "position";
 
     public static final FragmentViewPagerWeek newInstance(int position)
     {
-        FragmentViewPagerWeek fragmentSchedule = new FragmentViewPagerWeek();
-        Bundle args = fragmentSchedule.getArguments();
+        FragmentViewPagerWeek fragmentViewPagerWeek = new FragmentViewPagerWeek();
+        Bundle args = new Bundle();
         args.putInt(NAVIGATION_DRAWER_POSITION, position);
-        fragmentSchedule.setArguments(args);
+        fragmentViewPagerWeek.setArguments(args);
 
-        return fragmentSchedule;
+        return fragmentViewPagerWeek;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class FragmentViewPagerWeek extends Fragment
 
                 break;
             }
-            case 2:
+            case 1:
             {
                 viewPager.setAdapter(new EventFragmentPagerAdapter(getFragmentManager()));
 

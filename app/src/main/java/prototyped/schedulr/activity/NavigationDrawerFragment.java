@@ -1,16 +1,16 @@
 package prototyped.schedulr.activity;
 
-import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import prototyped.schedulr.R;
 
@@ -35,11 +34,11 @@ public class NavigationDrawerFragment extends Fragment
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
-    private int mCurrentSelectedPosition = 0;
+    public int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    private final String navigationDrawerItems[] = {"Schedule", "Alarms", "Events", "Profiles"};
+    private final String navigationDrawerItems[] = {"Schedule", "Events", "Profiles"};
 
     public NavigationDrawerFragment()
     {
@@ -72,7 +71,11 @@ public class NavigationDrawerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer_activity_main, container, false);
+        mDrawerListView = (ListView)inflater.inflate(R.layout.fragment_navigation_drawer_activity_main, container, false);
+//        NavigationDrawerListViewAdapter adapter = new NavigationDrawerListViewAdapter(getActionBar().getThemedContext());
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, navigationDrawerItems));
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -81,8 +84,6 @@ public class NavigationDrawerFragment extends Fragment
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, navigationDrawerItems));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
         return mDrawerListView;
     }
@@ -175,13 +176,16 @@ public class NavigationDrawerFragment extends Fragment
     private void selectItem(int position)
     {
         mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
+        if (mDrawerListView != null)
+        {
             mDrawerListView.setItemChecked(position, true);
         }
-        if (mDrawerLayout != null) {
+        if (mDrawerLayout != null)
+        {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
-        if (mCallbacks != null) {
+        if (mCallbacks != null)
+        {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
@@ -222,25 +226,24 @@ public class NavigationDrawerFragment extends Fragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
+        if (mDrawerLayout != null && isDrawerOpen())
+        {
             inflater.inflate(R.menu.global, menu);
             showGlobalContextActionBar();
         }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-            return true;
+        switch(item.getItemId())
+        {
+            case R.id.action_global_settings:
+            {
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);

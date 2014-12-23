@@ -1,4 +1,4 @@
-package adapter;
+package prototyped.schedulr.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,12 +10,12 @@ public class EventFragmentPagerAdapter extends FragmentPagerAdapter
 {
     private final int fragmentCount = 7;
     private final String dayNames[] = {"Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"};
+                                        "Tuesday",
+                                        "Wednesday",
+                                        "Thursday",
+                                        "Friday",
+                                        "Saturday",
+                                        "Sunday"};
 
     public EventFragmentPagerAdapter(FragmentManager fragmentManager)
     {
@@ -34,5 +34,10 @@ public class EventFragmentPagerAdapter extends FragmentPagerAdapter
     public int getCount()
     {
         return fragmentCount;
+    }
+
+    public CharSequence getPageTitle(int position)
+    {
+        return dayNames[position];
     }
 }

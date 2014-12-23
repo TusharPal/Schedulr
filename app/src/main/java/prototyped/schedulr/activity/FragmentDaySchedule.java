@@ -16,7 +16,7 @@ public class FragmentDaySchedule extends Fragment
     public static final FragmentDaySchedule newInstance(int position, String dayName)
     {
         FragmentDaySchedule fragmentDaySchedule = new FragmentDaySchedule();
-        Bundle args = fragmentDaySchedule.getArguments();
+        Bundle args = new Bundle();
         args.putInt(FRAGMENT_POSITION, position);
         args.putString(FRAGMENT_NAME, dayName);
         fragmentDaySchedule.setArguments(args);

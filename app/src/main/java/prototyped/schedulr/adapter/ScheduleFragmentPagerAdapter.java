@@ -1,4 +1,4 @@
-package adapter;
+package prototyped.schedulr.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,5 +34,10 @@ public class ScheduleFragmentPagerAdapter extends FragmentPagerAdapter
     public int getCount()
     {
         return fragmentCount;
+    }
+
+    public CharSequence getPageTitle(int position)
+    {
+        return dayNames[position];
     }
 }

@@ -8,7 +8,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
 {
     public static final String DATABASE_NAME = "Profiles.db";
     public static final String TABLE_NAME = "Profiles";
-    public static final int DATABASE_VERSION = 0;
+    public static final int DATABASE_VERSION = 1;
 
     public static final String COLUMN_PROFILE_NAME = "profile_name";
     public static final String COLUMN_PROFILE_COLOR = "profile_color";

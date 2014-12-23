@@ -23,7 +23,7 @@
         android:layout_toRightOf="@+id/textView_color_list_item_fragment_profiles"
         android:layout_alignBottom="@+id/textView_color_list_item_fragment_profiles"
         android:gravity="center"
-        android:text="I"
+        android:text="P"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView

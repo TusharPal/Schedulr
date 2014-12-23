@@ -16,7 +16,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
-    private String navigationDrawerItems[] = {"Schedule", "Alarms", "Events", "Profiles"};
+    private String navigationDrawerItems[] = {"Schedule", "Events", "Profiles"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -25,7 +25,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout)findViewById(R.id.drawer_layout));
         mTitle = getTitle();
     }
 
@@ -44,19 +44,13 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
             }
             case 1:
             {
-                fragmentManager.beginTransaction().replace(R.id.container, FragmentAlarms.newInstance()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, FragmentViewPagerWeek.newInstance(position)).commit();
 
                 break;
             }
             case 2:
             {
-                fragmentManager.beginTransaction().replace(R.id.container, FragmentViewPagerWeek.newInstance(position)).commit();
-
-                break;
-            }
-            case 3:
-            {
-                fragmentManager.beginTransaction().replace(R.id.container, FragmentProfiles.newInstance()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, FragmentProfiles.newInstance(getApplicationContext(), position)).commit();
 
                 break;
             }
@@ -82,12 +76,32 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        if (!mNavigationDrawerFragment.isDrawerOpen())
+        if(!mNavigationDrawerFragment.isDrawerOpen())
         {
-            getMenuInflater().inflate(R.menu.activity_main, menu);
-            restoreActionBar();
+            switch(mNavigationDrawerFragment.mCurrentSelectedPosition)
+            {
+                case 0:
+                {
+                    getMenuInflater().inflate(R.menu.fragment_schedule, menu);
+                    restoreActionBar();
 
-            return true;
+                    return true;
+                }
+                case 1:
+                {
+                    getMenuInflater().inflate(R.menu.fragment_events, menu);
+                    restoreActionBar();
+
+                    return true;
+                }
+                case 2:
+                {
+                    getMenuInflater().inflate(R.menu.fragement_profiles, menu);
+                    restoreActionBar();
+
+                    return true;
+                }
+            }
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -98,8 +112,10 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
     {
         switch(item.getItemId())
         {
-            case R.id.action_activity_main_settings:
+            case R.id.action_add_profile_fragment_profiles:
             {
+                getFragmentManager().beginTransaction().replace(R.id.container, new FragmentProfileCreateEdit());
+
                 return true;
             }
         }

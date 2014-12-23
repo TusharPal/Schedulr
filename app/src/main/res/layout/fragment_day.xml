@@ -5,11 +5,9 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_light">
 
-    <TextView
-        android:id="@+id/textview_fragment_day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+
+    <ListView
+        android:id="@+id/listView_fragment_day"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

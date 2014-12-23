@@ -1,4 +1,4 @@
-package adapter;
+package prototyped.schedulr.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -59,7 +59,7 @@ public class ProfileListViewAdapter extends BaseAdapter
             TextView textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
             TextView textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
             textViewColor.setBackgroundColor(Color.parseColor(list.get(position).PROFILE_COLOR));
-            textViewIcon.setText(list.get(position).PROFILE_ICON_ID);
+            textViewIcon.setText(list.get(position).PROFILE_ICON);
             textViewName.setText(list.get(position).PROFILE_NAME);
 
             viewHolder.textViewColor = textViewColor;

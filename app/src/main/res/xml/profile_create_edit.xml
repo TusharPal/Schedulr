@@ -14,6 +14,17 @@
     <PreferenceCategory
         android:title="Display" >
 
+        <prototyped.schedulr.activity.DialogPreferenceDisplayBrightness
+            android:key="PREFERENCE_DISPLAY_BRIGHTNESS"
+            android:title="Brightness"/>
+
+        <CheckBoxPreference
+            android:key="PREFERENCE_DISPLAY_BRIGHTNESS_AUTO_STATE"
+            android:title="Brightness auto set" />
+
+        <prototyped.schedulr.activity.DialogPreferenceDisplayTimeout
+            android:key="PREFERENCE_DISPLAY_TIMEOUT"
+            android:title="Display timeout"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -59,10 +70,17 @@
             android:key="PREFERENCE_WIFI_STATE"
             android:defaultValue="false" />
 
+        <CheckBoxPreference
+            android:title="Mobile data"
+            android:key="PREFERENCE_MOBILE_DATA_STATE"
+            android:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="Location" >
 
+        <prototyped.schedulr.activity.DialogPreferenceLocationMode
+            android:key="PREFERENCE_LOCATION_MODE"
+            android:title="Location mode" />
     </PreferenceCategory>
 </PreferenceScreen>
