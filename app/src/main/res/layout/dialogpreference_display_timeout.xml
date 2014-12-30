@@ -5,30 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_margin="8dp"
-        android:text="Set time in minutes:seconds"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView"/>
-
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:stretchColumns="*">
+        android:layout_margin="8dp">
 
-        <TableRow
-            android:layout_weight="1"
-            android:layout_gravity="center">
+        <TableRow>
 
             <NumberPicker
-                android:id="@+id/numberPicker_minute_dialogpreference_display_timeout"/>
+                android:id="@+id/numberPicker_minute_dialogpreference_display_timeout"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
 
             <NumberPicker
-                android:id="@+id/numberPicker_second_dialogpreference_display_timeout"/>
+                android:id="@+id/numberPicker_second_dialogpreference_display_timeout"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
         </TableRow>
     </TableLayout>
+
 </LinearLayout>

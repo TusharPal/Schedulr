@@ -6,38 +6,47 @@
         android:title="Profile details" >
 
         <EditTextPreference
-            android:key="PREFERENCE_PROFILE_NAME"
+            android:key="profile_name"
             android:title="Profile name"
             android:summary="Set the name of the profile" />
+
+        <prototyped.schedulr.activity.DialogPreferenceProfileIconPicker
+            android:key="profile_icon"
+            android:title="Profile icon"
+            android:summary="Set an icon for the profile"/>
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="Display" >
 
         <prototyped.schedulr.activity.DialogPreferenceDisplayBrightness
-            android:key="PREFERENCE_DISPLAY_BRIGHTNESS"
+            android:key="profile_display_brightness"
             android:title="Brightness"/>
 
         <CheckBoxPreference
-            android:key="PREFERENCE_DISPLAY_BRIGHTNESS_AUTO_STATE"
-            android:title="Brightness auto set" />
+            android:key="profile_display_brightness_auto_state"
+            android:title="Brightness auto set"
+            android:defaultValue="false"/>
 
         <prototyped.schedulr.activity.DialogPreferenceDisplayTimeout
-            android:key="PREFERENCE_DISPLAY_TIMEOUT"
+            android:key="profile_display_timeout"
             android:title="Display timeout"/>
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="Sound" >
 
+        <prototyped.schedulr.activity.DialogPreferenceSoundVolume
+            android:title="Volume"/>
+
         <RingtonePreference
             android:title="Ringtone"
-            android:key="PREFERENCE_RINGTONE"
-            android:ringtoneType="ringtone" />
+            android:key="profile_ringtone"
+            android:ringtoneType="ringtone"/>
 
         <RingtonePreference
             android:title="Notification tone"
-            android:key="PREFERENCE_NOTIFICATION_TONE"
+            android:key="profile_notification_tone"
             android:ringtoneType="notification" />
     </PreferenceCategory>
 
@@ -45,19 +54,19 @@
         android:title="System" >
 
         <CheckBoxPreference
-            android:key="PREFERENCE_DIAL_PAD_TOUCH_TONES"
+            android:key="profile_dial_pad_touch_tones"
             android:title="Dial pad touch tones"
             android:defaultValue="false" />
         <CheckBoxPreference
-            android:key="PREFERENCE_TOUCH_SOUNDS"
+            android:key="profile_touch_sounds"
             android:title="Touch sounds"
             android:defaultValue="false" />
         <CheckBoxPreference
-            android:key="PREFERENCE_SCREEN_LOCK_SOUND"
+            android:key="profile_screen_lock_sounds"
             android:title="Screen lock sounds"
             android:defaultValue="false" />
         <CheckBoxPreference
-            android:key="VIBRATE_ON_TOUCH"
+            android:key="profile_vibrate_on_touch"
             android:title="Vibrate on touch"
             android:defaultValue="false" />
     </PreferenceCategory>
@@ -66,21 +75,13 @@
         android:title="Wifi/Data" >
 
         <CheckBoxPreference
+            android:key="profile_wifi_state"
             android:title="Wifi"
-            android:key="PREFERENCE_WIFI_STATE"
             android:defaultValue="false" />
 
         <CheckBoxPreference
+            android:key="profile_mobile_data_mode"
             android:title="Mobile data"
-            android:key="PREFERENCE_MOBILE_DATA_STATE"
-            android:defaultValue="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="Location" >
-
-        <prototyped.schedulr.activity.DialogPreferenceLocationMode
-            android:key="PREFERENCE_LOCATION_MODE"
-            android:title="Location mode" />
+            android:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

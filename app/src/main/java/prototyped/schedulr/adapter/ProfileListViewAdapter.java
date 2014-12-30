@@ -2,7 +2,6 @@ package prototyped.schedulr.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,14 +54,11 @@ public class ProfileListViewAdapter extends BaseAdapter
             convertView = inflater.inflate(R.layout.list_item_fragment_profiles, parent, false);
             convertView.setTag(viewHolder);
 
-            TextView textViewColor = (TextView)convertView.findViewById(R.id.textView_color_list_item_fragment_profiles);
             TextView textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
             TextView textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
-            textViewColor.setBackgroundColor(Color.parseColor(list.get(position).PROFILE_COLOR));
             textViewIcon.setText(list.get(position).PROFILE_ICON);
             textViewName.setText(list.get(position).PROFILE_NAME);
 
-            viewHolder.textViewColor = textViewColor;
             viewHolder.textViewIcon = textViewIcon;
             viewHolder.textViewName = textViewName;
         }
@@ -70,10 +66,8 @@ public class ProfileListViewAdapter extends BaseAdapter
         {
             viewHolder = (ViewHolder)convertView.getTag();
 
-            TextView textViewColor = (TextView)convertView.findViewById(R.id.textView_color_list_item_fragment_profiles);
             TextView textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
             TextView textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
-            textViewColor = viewHolder.textViewColor;
             textViewIcon = viewHolder.textViewIcon;
             textViewName = viewHolder.textViewName;
         }

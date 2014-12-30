@@ -12,6 +12,8 @@ import prototyped.schedulr.R;
 
 public class DialogPreferenceDisplayTimeout extends DialogPreference implements DialogInterface.OnClickListener
 {
+    private NumberPicker numberPickerMinute;
+    private NumberPicker numberPickerSecond;
 
     public DialogPreferenceDisplayTimeout(Context context, AttributeSet attrs)
     {
@@ -30,8 +32,8 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
     @Override
     public void onBindDialogView(View view)
     {
-        NumberPicker numberPickerMinute = (NumberPicker)view.findViewById(R.id.numberPicker_minute_dialogpreference_display_timeout);
-        NumberPicker numberPickerSecond = (NumberPicker)view.findViewById(R.id.numberPicker_second_dialogpreference_display_timeout);
+        numberPickerMinute = (NumberPicker)view.findViewById(R.id.numberPicker_minute_dialogpreference_display_timeout);
+        numberPickerSecond = (NumberPicker)view.findViewById(R.id.numberPicker_second_dialogpreference_display_timeout);
 
         super.onBindDialogView(view);
     }
@@ -39,15 +41,9 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
     @Override
     public void onClick(DialogInterface dialog, int id)
     {
-
         if(id == DialogInterface.BUTTON_POSITIVE)
         {
-            // do your stuff to handle positive button
-
-        }
-        else if(id == DialogInterface.BUTTON_NEGATIVE)
-        {
-            // do your stuff to handle negative button
+            getPreferenceManager().getSharedPreferences().edit().putInt("profile_display_timeout", (numberPickerMinute.getValue()*60)+numberPickerSecond.getValue());
         }
     }
 }

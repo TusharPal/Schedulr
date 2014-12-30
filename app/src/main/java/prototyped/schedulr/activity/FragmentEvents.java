@@ -8,25 +8,23 @@ import android.view.ViewGroup;
 
 import prototyped.schedulr.R;
 
-public class FragmentDayEvent extends Fragment
+public class FragmentEvents extends Fragment
 {
     private static final String FRAGMENT_POSITION = "POSITION";
-    private static final String FRAGMENT_NAME = "NAME";
 
-    public static final FragmentDayEvent newInstance(int position, String dayName)
+    public static final FragmentEvents newInstance(int position)
     {
-        FragmentDayEvent fragmentDayEvent = new FragmentDayEvent();
+        FragmentEvents fragmentEvents = new FragmentEvents();
         Bundle args = new Bundle();
         args.putInt(FRAGMENT_POSITION, position);
-        args.putString(FRAGMENT_NAME, dayName);
-        fragmentDayEvent.setArguments(args);
+        fragmentEvents.setArguments(args);
 
-        return fragmentDayEvent;
+        return fragmentEvents;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View rootView = inflater.inflate(R.layout.fragment_day, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
         return rootView;
     }

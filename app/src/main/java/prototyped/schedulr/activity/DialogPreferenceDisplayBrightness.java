@@ -10,8 +10,11 @@ import android.widget.SeekBar;
 
 import prototyped.schedulr.R;
 
-public class DialogPreferenceDisplayBrightness extends DialogPreference implements DialogInterface.OnClickListener
+public class DialogPreferenceDisplayBrightness extends DialogPreference implements DialogInterface.OnClickListener, SeekBar.OnSeekBarChangeListener
 {
+    private SeekBar seekBarBrightness;
+    private int position;
+
     public DialogPreferenceDisplayBrightness(Context context, AttributeSet attrs)
     {
         super(context, attrs);
@@ -29,7 +32,9 @@ public class DialogPreferenceDisplayBrightness extends DialogPreference implemen
     @Override
     public void onBindDialogView(View view)
     {
-        SeekBar seekBarBrightness = (SeekBar)view.findViewById(R.id.seekBar_dialogpreference_display_brightness);
+        seekBarBrightness = (SeekBar)view.findViewById(R.id.seekBar_dialogpreference_display_brightness);
+        seekBarBrightness.setOnSeekBarChangeListener(this);
+        seekBarBrightness.setProgress(getPreferenceManager().getSharedPreferences().getInt("profile_display_brightness", 0));
 
         super.onBindDialogView(view);
     }
@@ -37,15 +42,27 @@ public class DialogPreferenceDisplayBrightness extends DialogPreference implemen
     @Override
     public void onClick(DialogInterface dialog, int id)
     {
-
         if(id == DialogInterface.BUTTON_POSITIVE)
         {
-            // do your stuff to handle positive button
+            getPreferenceManager().getSharedPreferences().edit().putInt("profile_display_brightness", position).commit();
+        }
+    }
 
-        }
-        else if(id == DialogInterface.BUTTON_NEGATIVE)
-        {
-            // do your stuff to handle negative button
-        }
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int position, boolean b)
+    {
+        this.position = position;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar)
+    {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar)
+    {
+
     }
 }

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import prototyped.schedulr.adapter.EventFragmentPagerAdapter;
 import prototyped.schedulr.adapter.ScheduleFragmentPagerAdapter;
 import prototyped.schedulr.R;
 
@@ -31,23 +30,7 @@ public class FragmentViewPagerWeek extends Fragment
     {
         View rootView = inflater.inflate(R.layout.fragment_view_pager_week, container, false);
         ViewPager viewPager = (ViewPager)rootView.findViewById(R.id.viewpager_fragment_schedules);
-
-        switch(getArguments().getInt(NAVIGATION_DRAWER_POSITION))
-        {
-            case 0:
-            {
-                viewPager.setAdapter(new ScheduleFragmentPagerAdapter(getFragmentManager()));
-
-                break;
-            }
-            case 1:
-            {
-                viewPager.setAdapter(new EventFragmentPagerAdapter(getFragmentManager()));
-
-                break;
-            }
-        }
-
+        viewPager.setAdapter(new ScheduleFragmentPagerAdapter(getFragmentManager()));
 
         return rootView;
     }

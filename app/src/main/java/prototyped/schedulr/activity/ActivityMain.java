@@ -1,5 +1,6 @@
 package prototyped.schedulr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -44,7 +45,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
             }
             case 1:
             {
-                fragmentManager.beginTransaction().replace(R.id.container, FragmentViewPagerWeek.newInstance(position)).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, FragmentEvents.newInstance(position)).commit();
 
                 break;
             }
@@ -96,7 +97,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
                 }
                 case 2:
                 {
-                    getMenuInflater().inflate(R.menu.fragement_profiles, menu);
+                    getMenuInflater().inflate(R.menu.fragment_profiles, menu);
                     restoreActionBar();
 
                     return true;
@@ -114,7 +115,10 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
         {
             case R.id.action_add_profile_fragment_profiles:
             {
-                getFragmentManager().beginTransaction().replace(R.id.container, new FragmentProfileCreateEdit());
+                Intent intent = new Intent(getBaseContext(), ActivityProfileCreateEdit.class);
+                intent.putExtra("flag_new_profile", true);
+
+                startActivity(intent);
 
                 return true;
             }

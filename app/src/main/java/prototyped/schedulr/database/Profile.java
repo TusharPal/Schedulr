@@ -3,29 +3,33 @@ package prototyped.schedulr.database;
 public class Profile
 {
     public String PROFILE_NAME;
-    public String PROFILE_COLOR;
-    public String PROFILE_ICON;
-    public String SOUND_RINGTONE;
-    public int SOUND_RING_MODE;
-    public String SOUND_NOTIFICATION_TONE;
+    public int PROFILE_ICON;
     public int DISPLAY_BRIGHTNESS_LEVEL;
-    public int DISPLAY_BRIGHTNESS_AUTO_STATE;
+    public boolean DISPLAY_BRIGHTNESS_AUTO_STATE;
     public int DISPLAY_SLEEP_TIMEOUT;
-    public int WIFI_STATE;
-
-
+    public int SOUND_VOLUME_RINGTONE;
+    public int SOUND_VOLUME_APPLICATION;
+    public int SOUND_VOLUME_ALARM;
+    public String SOUND_RINGTONE;
+    public String SOUND_NOTIFICATION_TONE;
+    public int SOUND_RING_MODE;
+    public boolean WIFI_STATE;
+    public boolean MOBILE_DATA_STATE;
 
     public Profile()
     {
         this.PROFILE_NAME = "New Profile";
-        this.PROFILE_COLOR = "#ffffff";
-        this.PROFILE_ICON = "";
-        this.SOUND_RINGTONE = "";
-        this.SOUND_RING_MODE = 2;
-        this.SOUND_NOTIFICATION_TONE = "";
+        this.PROFILE_ICON = 0;
         this.DISPLAY_BRIGHTNESS_LEVEL = 5;
-        this.DISPLAY_BRIGHTNESS_AUTO_STATE = 0;
+        this.DISPLAY_BRIGHTNESS_AUTO_STATE = false;
         this.DISPLAY_SLEEP_TIMEOUT = 1;
-        this.WIFI_STATE = 0;
+        this.SOUND_VOLUME_RINGTONE = 5;
+        this.SOUND_VOLUME_APPLICATION = 5;
+        this.SOUND_VOLUME_ALARM = 5;
+        this.SOUND_RINGTONE = "";
+        this.SOUND_NOTIFICATION_TONE = "";
+        this.SOUND_RING_MODE = 2;
+        this.WIFI_STATE = false;
+        this.MOBILE_DATA_STATE = false;
     }
 }

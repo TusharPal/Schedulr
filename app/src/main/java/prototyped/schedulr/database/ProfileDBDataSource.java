@@ -13,15 +13,18 @@ public class ProfileDBDataSource
     private SQLiteDatabase database;
     private ProfileDBHelper dbHelper;
     private String allColumns[]={ProfileDBHelper.COLUMN_PROFILE_NAME,
-                                    ProfileDBHelper.COLUMN_PROFILE_COLOR,
                                     ProfileDBHelper.COLUMN_PROFILE_ICON,
-                                    ProfileDBHelper.COLUMN_SOUND_RINGTONE,
-                                    ProfileDBHelper.COLUMN_SOUND_RING_MODE,
-                                    ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE,
                                     ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL,
                                     ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_AUTO_STATE,
                                     ProfileDBHelper.COLUMN_DISPLAY_SLEEP_TIMEOUT,
-                                    ProfileDBHelper.COLUMN_WIFI_STATE};
+                                    ProfileDBHelper.COLUMN_SOUND_VOLUME_RINGTONE,
+                                    ProfileDBHelper.COLUMN_SOUND_VOLUME_APPLICATION,
+                                    ProfileDBHelper.COLUMN_SOUND_VOLUME_ALARM,
+                                    ProfileDBHelper.COLUMN_SOUND_RINGTONE,
+                                    ProfileDBHelper.COLUMN_SOUND_RING_MODE,
+                                    ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE,
+                                    ProfileDBHelper.COLUMN_WIFI_STATE,
+                                    ProfileDBHelper.COLUMN_MOBILE_DATA_STATE};
 
     public ProfileDBDataSource(Context context)
     {
@@ -43,39 +46,45 @@ public class ProfileDBDataSource
     {
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
-        values.put(ProfileDBHelper.COLUMN_PROFILE_COLOR, profile.PROFILE_COLOR);
         values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL, profile.DISPLAY_BRIGHTNESS_LEVEL);
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_AUTO_STATE, (profile.DISPLAY_BRIGHTNESS_AUTO_STATE?1:0));
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_SLEEP_TIMEOUT, profile.DISPLAY_SLEEP_TIMEOUT);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_RINGTONE, profile.SOUND_VOLUME_RINGTONE);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_APPLICATION, profile.SOUND_VOLUME_APPLICATION);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_ALARM, profile.SOUND_VOLUME_ALARM);
         values.put(ProfileDBHelper.COLUMN_SOUND_RINGTONE, profile.SOUND_RINGTONE);
         values.put(ProfileDBHelper.COLUMN_SOUND_RING_MODE, profile.SOUND_RING_MODE);
         values.put(ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE, profile.SOUND_NOTIFICATION_TONE);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL, profile.DISPLAY_BRIGHTNESS_LEVEL);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_AUTO_STATE, profile.DISPLAY_BRIGHTNESS_AUTO_STATE);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_SLEEP_TIMEOUT, profile.DISPLAY_SLEEP_TIMEOUT);
-        values.put(ProfileDBHelper.COLUMN_WIFI_STATE, profile.WIFI_STATE);
+        values.put(ProfileDBHelper.COLUMN_WIFI_STATE, (profile.WIFI_STATE?1:0));
+        values.put(ProfileDBHelper.COLUMN_MOBILE_DATA_STATE, (profile.MOBILE_DATA_STATE?1:0));
 
         database.insert(ProfileDBHelper.TABLE_NAME, null, values);
     }
 
-    public void editProfile(Profile profile)
+    public void editProfile(String oldProfileName, Profile profile)
     {
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
-        values.put(ProfileDBHelper.COLUMN_PROFILE_COLOR, profile.PROFILE_COLOR);
         values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL, profile.DISPLAY_BRIGHTNESS_LEVEL);
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_AUTO_STATE, (profile.DISPLAY_BRIGHTNESS_AUTO_STATE?1:0));
+        values.put(ProfileDBHelper.COLUMN_DISPLAY_SLEEP_TIMEOUT, profile.DISPLAY_SLEEP_TIMEOUT);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_RINGTONE, profile.SOUND_VOLUME_RINGTONE);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_APPLICATION, profile.SOUND_VOLUME_APPLICATION);
+        values.put(ProfileDBHelper.COLUMN_SOUND_VOLUME_ALARM, profile.SOUND_VOLUME_ALARM);
         values.put(ProfileDBHelper.COLUMN_SOUND_RINGTONE, profile.SOUND_RINGTONE);
         values.put(ProfileDBHelper.COLUMN_SOUND_RING_MODE, profile.SOUND_RING_MODE);
         values.put(ProfileDBHelper.COLUMN_SOUND_NOTIFICATION_TONE, profile.SOUND_NOTIFICATION_TONE);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL, profile.DISPLAY_BRIGHTNESS_LEVEL);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_AUTO_STATE, profile.DISPLAY_BRIGHTNESS_AUTO_STATE);
-        values.put(ProfileDBHelper.COLUMN_DISPLAY_SLEEP_TIMEOUT, profile.DISPLAY_SLEEP_TIMEOUT);
-        values.put(ProfileDBHelper.COLUMN_WIFI_STATE, profile.WIFI_STATE);
+        values.put(ProfileDBHelper.COLUMN_WIFI_STATE, (profile.WIFI_STATE?1:0));
+        values.put(ProfileDBHelper.COLUMN_MOBILE_DATA_STATE, (profile.MOBILE_DATA_STATE?1:0));
 
-        database.update(ProfileDBHelper.TABLE_NAME, values, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + profile.PROFILE_NAME, null);
+        database.update(ProfileDBHelper.TABLE_NAME, values, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + oldProfileName, null);
     }
 
-    public void deleteProfile(Profile profile)
+    public void deleteProfile(String profileName)
     {
-        database.delete(ProfileDBHelper.TABLE_NAME, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + profile.PROFILE_NAME, null );
+        database.delete(ProfileDBHelper.TABLE_NAME, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + profileName, null );
     }
 
     public Profile getProfile(String name)
@@ -109,15 +118,18 @@ public class ProfileDBDataSource
         Profile profile=new Profile();
 
         profile.PROFILE_NAME = cursor.getString(0);
-        profile.PROFILE_COLOR = cursor.getString(1);
-        profile.PROFILE_ICON = cursor.getString(2);
-        profile.SOUND_RINGTONE = cursor.getString(3);
-        profile.SOUND_RING_MODE = cursor.getInt(4);
-        profile.SOUND_NOTIFICATION_TONE = cursor.getString(5);
-        profile.DISPLAY_BRIGHTNESS_LEVEL = cursor.getInt(6);
-        profile.DISPLAY_BRIGHTNESS_AUTO_STATE = cursor.getInt(7);
-        profile.DISPLAY_SLEEP_TIMEOUT = cursor.getInt(8);
-        profile.WIFI_STATE = cursor.getInt(9);
+        profile.PROFILE_ICON = cursor.getInt(1);
+        profile.DISPLAY_BRIGHTNESS_LEVEL = cursor.getInt(2);
+        profile.DISPLAY_BRIGHTNESS_AUTO_STATE = cursor.getInt(3)>0?true:false;
+        profile.DISPLAY_SLEEP_TIMEOUT = cursor.getInt(4);
+        profile.SOUND_VOLUME_RINGTONE = cursor.getInt(5);
+        profile.SOUND_VOLUME_APPLICATION = cursor.getInt(6);
+        profile.SOUND_VOLUME_ALARM = cursor.getInt(7);
+        profile.SOUND_RINGTONE = cursor.getString(8);
+        profile.SOUND_NOTIFICATION_TONE = cursor.getString(9);
+        profile.SOUND_RING_MODE = cursor.getInt(10);
+        profile.WIFI_STATE = cursor.getInt(11)>0?true:false;
+        profile.MOBILE_DATA_STATE = cursor.getInt(12)>0?true:false;
 
         return profile;
     }
