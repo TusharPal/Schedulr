@@ -1,8 +1,6 @@
 package prototyped.schedulr.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -15,10 +13,11 @@ import prototyped.schedulr.R;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 
-public class ActivityProfileCreateEdit extends PreferenceActivity implements Preference.OnPreferenceChangeListener, DialogInterface.OnClickListener
+public class ActivityProfileCreateEdit extends PreferenceActivity implements Preference.OnPreferenceChangeListener
 {
     private ProfileDBDataSource dataSource;
     private SharedPreferences sharedPreferences;
+    private AlertDialog alertDialogSave;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -40,8 +39,20 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
     protected void onPause()
     {
         super.onPause();
+/*
+        if(alertDialogSave != null)
+        {
+            alertDialogSave.dismiss();
+        }
+*/
+        saveProfile();
+    }
 
+    public void onBackPressed()
+    {
+//        alertDialogSave();
 
+        super.onBackPressed();
     }
 
     private void setPreferences()
@@ -127,10 +138,10 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
             dataSource.editProfile(getIntent().getExtras().getString("_search_profile_name", ""), profile);
         }
     }
-
+/*
     private void alertDialogSave()
     {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Save this profile?");
 
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
@@ -138,9 +149,10 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
             @Override
             public void onClick(DialogInterface arg0, int arg1)
             {
-                Intent positveActivity = new Intent(getApplicationContext(),com.example.alertdialog.PositiveActivity.class);
-                startActivity(positveActivity);
+                Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+                startActivity(intent);
 
+                finish();
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -148,15 +160,14 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                Intent negativeActivity = new Intent(getApplicationContext(),com.example.alertdialog.NegativeActivity.class);
-                startActivity(negativeActivity);
+                finish();
             }
         });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialogSave = alertDialogBuilder.create();
+        alertDialogSave.show();
     }
-
+*/
     @Override
     public boolean onPreferenceChange(Preference preference, Object o)
     {

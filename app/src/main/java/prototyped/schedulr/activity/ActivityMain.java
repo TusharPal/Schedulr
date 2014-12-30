@@ -117,8 +117,8 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
             {
                 Intent intent = new Intent(getBaseContext(), ActivityProfileCreateEdit.class);
                 intent.putExtra("flag_new_profile", true);
-
                 startActivity(intent);
+                finish();
 
                 return true;
             }
