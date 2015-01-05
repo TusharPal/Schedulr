@@ -1,6 +1,5 @@
 package prototyped.schedulr.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,13 @@ public class ProfileListViewAdapter extends BaseAdapter
 {
     private Context context;
     private List<Profile> list;
+    private LayoutInflater layoutInflater;
 
     public ProfileListViewAdapter(Context context, List<Profile> list)
     {
         this.context = context;
         this.list = list;
+        layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -46,18 +47,19 @@ public class ProfileListViewAdapter extends BaseAdapter
     public View getView(int position, View convertView, ViewGroup parent)
     {
         ViewHolder viewHolder;
+        TextView textViewIcon;
+        TextView textViewName;
 
         if(convertView == null)
         {
             viewHolder = new ViewHolder();
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            convertView = inflater.inflate(R.layout.list_item_fragment_profiles, parent, false);
+            convertView = layoutInflater.inflate(R.layout.list_item_fragment_profiles, parent, false);
             convertView.setTag(viewHolder);
 
-            TextView textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
-            TextView textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
-            textViewIcon.setText(list.get(position).PROFILE_ICON);
-            textViewName.setText(list.get(position).PROFILE_NAME);
+            textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
+            textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
+            textViewIcon.setBackgroundResource(list.get(position).PROFILE_ICON);
+            textViewName.setText(list.get(position).PROFILE_NAME.toString());
 
             viewHolder.textViewIcon = textViewIcon;
             viewHolder.textViewName = textViewName;
@@ -66,8 +68,8 @@ public class ProfileListViewAdapter extends BaseAdapter
         {
             viewHolder = (ViewHolder)convertView.getTag();
 
-            TextView textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
-            TextView textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
+            textViewIcon = (TextView)convertView.findViewById(R.id.textView_icon_list_item_fragment_profiles);
+            textViewName = (TextView)convertView.findViewById(R.id.textView_name_list_item_fragment_profiles);
             textViewIcon = viewHolder.textViewIcon;
             textViewName = viewHolder.textViewName;
         }
@@ -77,7 +79,6 @@ public class ProfileListViewAdapter extends BaseAdapter
 
     static class ViewHolder
     {
-        TextView textViewColor;
         TextView textViewIcon;
         TextView textViewName;
     }

@@ -6,36 +6,29 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView_color_list_item_fragment_profiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="16dp"
-        android:minHeight="48dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:background="@android:color/holo_blue_dark"/>
+        android:id="@+id/textView_icon_list_item_fragment_profiles"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView
-        android:id="@+id/textView_icon_list_item_fragment_profiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:minWidth="48dp"
-        android:layout_toRightOf="@+id/textView_color_list_item_fragment_profiles"
-        android:layout_alignBottom="@+id/textView_color_list_item_fragment_profiles"
+        android:id="@+id/textView_divider_list_item_fragment_profiles"
+        android:layout_width="4dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:layout_toRightOf="@+id/textView_icon_list_item_fragment_profiles"
         android:gravity="center"
-        android:text="P"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@android:color/white"/>
 
     <TextView
         android:id="@+id/textView_name_list_item_fragment_profiles"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:minWidth="48dp"
-        android:layout_toRightOf="@+id/textView_icon_list_item_fragment_profiles"
-        android:layout_alignBottom="@+id/textView_color_list_item_fragment_profiles"
-        android:layout_alignParentRight="true"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:layout_toRightOf="@+id/textView_divider_list_item_fragment_profiles"
         android:gravity="center_vertical"
-        android:text="Profile"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 </RelativeLayout>

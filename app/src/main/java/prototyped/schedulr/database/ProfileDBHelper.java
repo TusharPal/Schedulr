@@ -8,7 +8,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
 {
     public static final String DATABASE_NAME = "Profiles.db";
     public static final String TABLE_NAME = "Profiles";
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
 
     public static final String COLUMN_PROFILE_NAME = "profile_name";
     public static final String COLUMN_PROFILE_ICON = "profile_icon";
@@ -33,9 +33,9 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                         + COLUMN_SOUND_VOLUME_RINGTONE + " INTEGER NOT NULL,"
                                                         + COLUMN_SOUND_VOLUME_APPLICATION + " INTEGER NOT NULL,"
                                                         + COLUMN_SOUND_VOLUME_ALARM + " INTEGER NOT NULL,"
-                                                        + COLUMN_SOUND_RINGTONE + " STRING NOT NULL,"
-                                                        + COLUMN_SOUND_NOTIFICATION_TONE + " STRING NOT NULL,"
-                                                        + COLUMN_SOUND_RING_MODE + " INTEGER NOT NULL,"
+                                                        + COLUMN_SOUND_RINGTONE + " TEXT NOT NULL,"
+                                                        + COLUMN_SOUND_NOTIFICATION_TONE + " TEXT NOT NULL,"
+                                                        + COLUMN_SOUND_RING_MODE + " TEXT NOT NULL,"
                                                         + COLUMN_WIFI_STATE + " INTEGER NOT NULL,"
                                                         + COLUMN_MOBILE_DATA_STATE + " INTEGER NOT NULL);";
 

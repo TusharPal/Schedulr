@@ -12,7 +12,7 @@ public class Profile
     public int SOUND_VOLUME_ALARM;
     public String SOUND_RINGTONE;
     public String SOUND_NOTIFICATION_TONE;
-    public int SOUND_RING_MODE;
+    public String SOUND_RING_MODE;
     public boolean WIFI_STATE;
     public boolean MOBILE_DATA_STATE;
 
@@ -28,7 +28,7 @@ public class Profile
         this.SOUND_VOLUME_ALARM = 5;
         this.SOUND_RINGTONE = "";
         this.SOUND_NOTIFICATION_TONE = "";
-        this.SOUND_RING_MODE = 2;
+        this.SOUND_RING_MODE = "2";
         this.WIFI_STATE = false;
         this.MOBILE_DATA_STATE = false;
     }

@@ -10,7 +10,7 @@ import android.widget.NumberPicker;
 
 import prototyped.schedulr.R;
 
-public class DialogPreferenceDisplayTimeout extends DialogPreference implements DialogInterface.OnClickListener
+public class DialogPreferenceDisplayTimeout extends DialogPreference implements DialogInterface.OnClickListener, NumberPicker.OnValueChangeListener
 {
     private NumberPicker numberPickerMinute;
     private NumberPicker numberPickerSecond;
@@ -35,6 +35,14 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
         numberPickerMinute = (NumberPicker)view.findViewById(R.id.numberPicker_minute_dialogpreference_display_timeout);
         numberPickerSecond = (NumberPicker)view.findViewById(R.id.numberPicker_second_dialogpreference_display_timeout);
 
+        numberPickerMinute.setMinValue(0);
+        numberPickerSecond.setMinValue(0);
+        numberPickerMinute.setMaxValue(59);
+        numberPickerSecond.setMaxValue(59);
+        numberPickerMinute.setWrapSelectorWheel(true);
+        numberPickerSecond.setWrapSelectorWheel(true);
+        numberPickerMinute.setOnValueChangedListener(this);
+        numberPickerSecond.setOnValueChangedListener(this);
         super.onBindDialogView(view);
     }
 
@@ -45,5 +53,11 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
         {
             getPreferenceManager().getSharedPreferences().edit().putInt("profile_display_timeout", (numberPickerMinute.getValue()*60)+numberPickerSecond.getValue());
         }
+    }
+
+    @Override
+    public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue)
+    {
+
     }
 }

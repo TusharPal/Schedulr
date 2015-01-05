@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import prototyped.schedulr.adapter.ProfileListViewAdapter;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 
-public class FragmentProfiles extends Fragment implements AdapterView.OnItemClickListener
+public class FragmentProfiles extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
     private static final String NAVIGATION_DRAWER_POSITION = "position";
     private static ProfileDBDataSource dataSource;
@@ -43,7 +44,9 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
         ListView listView = (ListView)rootView.findViewById(R.id.listView_fragment_profiles);
-        ProfileListViewAdapter adapter = new ProfileListViewAdapter(context, list);
+        listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
+        ProfileListViewAdapter adapter = new ProfileListViewAdapter(getActivity(), list);
         listView.setAdapter(adapter);
 
         return rootView;
@@ -59,6 +62,14 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
+        Toast.makeText(getActivity().getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
+    {
+        Toast.makeText(getActivity().getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
+
+        return false;
     }
 }

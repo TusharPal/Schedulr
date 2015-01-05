@@ -12,6 +12,7 @@ public class ProfileDBDataSource
 {
     private SQLiteDatabase database;
     private ProfileDBHelper dbHelper;
+    private Context context;
     private String allColumns[]={ProfileDBHelper.COLUMN_PROFILE_NAME,
                                     ProfileDBHelper.COLUMN_PROFILE_ICON,
                                     ProfileDBHelper.COLUMN_DISPLAY_BRIGHTNESS_LEVEL,
@@ -29,6 +30,7 @@ public class ProfileDBDataSource
     public ProfileDBDataSource(Context context)
     {
         dbHelper = new ProfileDBHelper(context);
+        this.context = context;
     }
 
     public void open()
@@ -44,6 +46,12 @@ public class ProfileDBDataSource
 
     public void createProfile(Profile profile)
     {
+        String text = profile.PROFILE_NAME + "\n"
+                        + profile.PROFILE_ICON + "\n"
+                        + profile.DISPLAY_BRIGHTNESS_LEVEL + "\n"
+                + (profile.DISPLAY_BRIGHTNESS_AUTO_STATE?"true":"false") + "\n"
+                + profile.DISPLAY_SLEEP_TIMEOUT + "\n";
+
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
         values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
@@ -127,7 +135,7 @@ public class ProfileDBDataSource
         profile.SOUND_VOLUME_ALARM = cursor.getInt(7);
         profile.SOUND_RINGTONE = cursor.getString(8);
         profile.SOUND_NOTIFICATION_TONE = cursor.getString(9);
-        profile.SOUND_RING_MODE = cursor.getInt(10);
+        profile.SOUND_RING_MODE = cursor.getString(10);
         profile.WIFI_STATE = cursor.getInt(11)>0?true:false;
         profile.MOBILE_DATA_STATE = cursor.getInt(12)>0?true:false;
 
