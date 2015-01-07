@@ -1,15 +1,20 @@
 package prototyped.schedulr.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -24,6 +29,10 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     private static ProfileDBDataSource dataSource;
     private List<Profile> list;
     private static Context context;
+    private int position;
+    private AlertDialog alertDialogDelete;
+    private ProfileListViewAdapter adapter;
+    private ListView listView;
 
     public static final FragmentProfiles newInstance(Context c, int position)
     {
@@ -40,13 +49,15 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        setHasOptionsMenu(true);
+        alertDialogDelete = alertDialogDelete();
         list=dataSource.getProfileList();
 
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
-        ListView listView = (ListView)rootView.findViewById(R.id.listView_fragment_profiles);
+        adapter = new ProfileListViewAdapter(getActivity(), list);
+        listView = (ListView)rootView.findViewById(R.id.listView_fragment_profiles);
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
-        ProfileListViewAdapter adapter = new ProfileListViewAdapter(getActivity(), list);
         listView.setAdapter(adapter);
 
         return rootView;
@@ -59,17 +70,73 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
         ((ActivityMain)activity).onSectionAttached(getArguments().getInt(NAVIGATION_DRAWER_POSITION));
     }
 
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.fragment_profiles, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.action_add_profile_fragment_profiles:
+            {
+                Intent intent = new Intent(context, ActivityProfileCreateEdit.class);
+                intent.putExtra("flag_new_profile", true);
+                startActivity(intent);
+                getActivity().finish();
+
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        Toast.makeText(getActivity().getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), ActivityProfileCreateEdit.class);
+        intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
+        intent.putExtra("flag_new_profile", false);
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        Toast.makeText(getActivity().getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
+        this.position = position;
+        alertDialogDelete.show();
 
         return false;
+    }
+
+    private AlertDialog alertDialogDelete()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setMessage("Delete this profile?");
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which)
+            {
+                dataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
+                list = dataSource.getProfileList();
+                adapter = new ProfileListViewAdapter(getActivity(), list);
+                listView.setAdapter(adapter);
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which)
+            {
+                dialogInterface.cancel();
+            }
+        });
+
+        return alertDialogBuilder.create();
     }
 }

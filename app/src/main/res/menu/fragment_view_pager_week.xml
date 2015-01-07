@@ -3,8 +3,9 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings_fragment_schedule"
-        android:title="Settings"
-        app:showAsAction="never"
+        android:id="@+id/action_add_schedule_fragment_schedule"
+        android:icon="@drawable/ic_action_new"
+        android:title="Add schedule"
+        app:showAsAction="always"
         android:orderInCategory="100" />
 </menu>

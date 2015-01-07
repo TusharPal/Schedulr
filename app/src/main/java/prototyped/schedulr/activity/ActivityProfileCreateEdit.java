@@ -21,6 +21,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
     private ProfileDBDataSource dataSource;
     private SharedPreferences sharedPreferences;
     private AlertDialog alertDialogSave;
+    private String searchProfileName;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -32,6 +33,8 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
         getFragmentManager().beginTransaction().replace(android.R.id.content, ProfilePreferenceFragment.newInstance()).commit();
 
         alertDialogSave = alertDialogSave();
+        searchProfileName = getIntent().getExtras().getString("search_profile_name");
+        setPreferences();
     }
 
     protected void onResume()
@@ -75,7 +78,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
         }
         else
         {
-            profile = dataSource.getProfile(sharedPreferences.getString("_search_profile_name", ""));
+            profile = dataSource.getProfile(searchProfileName);
 
             sharedPreferences.edit().putString("profile_name", profile.PROFILE_NAME).apply();
             sharedPreferences.edit().putInt("profile_icon", profile.PROFILE_ICON).apply();
@@ -132,7 +135,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
             profile.WIFI_STATE = sharedPreferences.contains("profile_wifi_state")?sharedPreferences.getBoolean("profile_wifi_state", false):false;
             profile.MOBILE_DATA_STATE = sharedPreferences.contains("profile_mobile_data_state")?sharedPreferences.getBoolean("profile_mobile_data_state", false):false;
 
-            dataSource.editProfile(getIntent().getExtras().getString("_search_profile_name", ""), profile);
+            dataSource.editProfile(searchProfileName, profile);
         }
     }
 
@@ -150,6 +153,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
 
                 dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+                intent.putExtra("fragment_number", 2);
                 startActivity(intent);
 
                 finish();
@@ -161,6 +165,9 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
+                Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+                intent.putExtra("fragment_number", 2);
+                startActivity(intent);
 
                 finish();
             }

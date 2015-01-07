@@ -1,5 +1,7 @@
 package prototyped.schedulr.database;
 
+import prototyped.schedulr.R;
+
 public class Profile
 {
     public String PROFILE_NAME;
@@ -19,7 +21,7 @@ public class Profile
     public Profile()
     {
         this.PROFILE_NAME = "New Profile";
-        this.PROFILE_ICON = 0;
+        this.PROFILE_ICON = R.drawable.ic_profile_01;
         this.DISPLAY_BRIGHTNESS_LEVEL = 5;
         this.DISPLAY_BRIGHTNESS_AUTO_STATE = false;
         this.DISPLAY_SLEEP_TIMEOUT = 1;

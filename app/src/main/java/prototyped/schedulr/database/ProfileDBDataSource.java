@@ -46,12 +46,6 @@ public class ProfileDBDataSource
 
     public void createProfile(Profile profile)
     {
-        String text = profile.PROFILE_NAME + "\n"
-                        + profile.PROFILE_ICON + "\n"
-                        + profile.DISPLAY_BRIGHTNESS_LEVEL + "\n"
-                + (profile.DISPLAY_BRIGHTNESS_AUTO_STATE?"true":"false") + "\n"
-                + profile.DISPLAY_SLEEP_TIMEOUT + "\n";
-
         ContentValues values = new ContentValues();
         values.put(ProfileDBHelper.COLUMN_PROFILE_NAME, profile.PROFILE_NAME);
         values.put(ProfileDBHelper.COLUMN_PROFILE_ICON, profile.PROFILE_ICON);
@@ -87,17 +81,17 @@ public class ProfileDBDataSource
         values.put(ProfileDBHelper.COLUMN_WIFI_STATE, (profile.WIFI_STATE?1:0));
         values.put(ProfileDBHelper.COLUMN_MOBILE_DATA_STATE, (profile.MOBILE_DATA_STATE?1:0));
 
-        database.update(ProfileDBHelper.TABLE_NAME, values, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + oldProfileName, null);
+        database.update(ProfileDBHelper.TABLE_NAME, values, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + oldProfileName + "\"", null);
     }
 
     public void deleteProfile(String profileName)
     {
-        database.delete(ProfileDBHelper.TABLE_NAME, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + profileName, null );
+        database.delete(ProfileDBHelper.TABLE_NAME, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + profileName + "\"", null );
     }
 
     public Profile getProfile(String name)
     {
-        Cursor cursor = database.query(ProfileDBHelper.TABLE_NAME, allColumns, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + name, null, null, null, null);
+        Cursor cursor = database.query(ProfileDBHelper.TABLE_NAME, allColumns, ProfileDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + name + "\"", null, null, null, null);
         cursor.moveToFirst();
         Profile profile = cursorToProfile(cursor);
         cursor.close();

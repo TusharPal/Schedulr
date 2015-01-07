@@ -29,15 +29,12 @@ public class NavigationDrawerFragment extends Fragment
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private NavigationDrawerCallbacks mCallbacks;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-
     public int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
-
     private final String navigationDrawerItems[] = {"Schedule", "Events", "Profiles"};
 
     public NavigationDrawerFragment()
@@ -48,7 +45,6 @@ public class NavigationDrawerFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sharedPreferences.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
@@ -58,24 +54,21 @@ public class NavigationDrawerFragment extends Fragment
             mFromSavedInstanceState = true;
         }
 
-        selectItem(mCurrentSelectedPosition);
+//        selectItem(mCurrentSelectedPosition);
     }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         mDrawerListView = (ListView)inflater.inflate(R.layout.fragment_navigation_drawer_activity_main, container, false);
-//        NavigationDrawerListViewAdapter adapter = new NavigationDrawerListViewAdapter(getActionBar().getThemedContext());
+// NavigationDrawerListViewAdapter adapter = new NavigationDrawerListViewAdapter(getActionBar().getThemedContext());
         mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, navigationDrawerItems));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -84,42 +77,36 @@ public class NavigationDrawerFragment extends Fragment
                 selectItem(position);
             }
         });
-
         return mDrawerListView;
     }
-
     public boolean isDrawerOpen()
     {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
-
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
      *
-     * @param fragmentId   The android:id of this fragment in its activity's layout.
+     * @param fragmentId The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
     public void setUp(int fragmentId, DrawerLayout drawerLayout)
     {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
-
-        // set a custom shadow that overlays the main content when the drawer opens
+// set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // set up the drawer's list view with items and click listener
-
+// set up the drawer's list view with items and click listener
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the navigation drawer and the action bar app icon.
+// ActionBarDrawerToggle ties together the the proper interactions
+// between the navigation drawer and the action bar app icon.
         mDrawerToggle = new ActionBarDrawerToggle(
-                getActivity(),                    /* host Activity */
-                mDrawerLayout,                    /* DrawerLayout object */
-                R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
+                getActivity(), /* host Activity */
+                mDrawerLayout, /* DrawerLayout object */
+                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
+                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
         )
         {
             @Override
@@ -129,10 +116,8 @@ public class NavigationDrawerFragment extends Fragment
                 if (!isAdded()) {
                     return;
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
-
             @Override
             public void onDrawerOpened(View drawerView)
             {
@@ -140,27 +125,23 @@ public class NavigationDrawerFragment extends Fragment
                 if (!isAdded()) {
                     return;
                 }
-
                 if (!mUserLearnedDrawer) {
-                    // The user manually opened the drawer; store this flag to prevent auto-showing
-                    // the navigation drawer automatically in the future.
+// The user manually opened the drawer; store this flag to prevent auto-showing
+// the navigation drawer automatically in the future.
                     mUserLearnedDrawer = true;
                     SharedPreferences sp = PreferenceManager
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
         };
-
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
+// If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
+// per the navigation drawer design guidelines.
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
-
-        // Defer code dependent on restoration of previous instance state.
+// Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable()
         {
             @Override
@@ -169,13 +150,13 @@ public class NavigationDrawerFragment extends Fragment
                 mDrawerToggle.syncState();
             }
         });
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    private void selectItem(int position)
+    public void selectItem(int position)
     {
         mCurrentSelectedPosition = position;
+
         if (mDrawerListView != null)
         {
             mDrawerListView.setItemChecked(position, true);
@@ -189,7 +170,6 @@ public class NavigationDrawerFragment extends Fragment
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
-
     @Override
     public void onAttach(Activity activity)
     {
@@ -200,29 +180,25 @@ public class NavigationDrawerFragment extends Fragment
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
     }
-
     @Override
     public void onDetach()
     {
         super.onDetach();
         mCallbacks = null;
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
+// Forward the new configuration the drawer toggle component.
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
@@ -231,10 +207,8 @@ public class NavigationDrawerFragment extends Fragment
             inflater.inflate(R.menu.global, menu);
             showGlobalContextActionBar();
         }
-
         super.onCreateOptionsMenu(menu, inflater);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -245,10 +219,8 @@ public class NavigationDrawerFragment extends Fragment
                 return true;
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
-
     /**
      * Per the navigation drawer design guidelines, updates the action bar to show the global app
      * 'context', rather than just what's in the current screen.
@@ -260,12 +232,10 @@ public class NavigationDrawerFragment extends Fragment
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setTitle(R.string.app_name);
     }
-
     private ActionBar getActionBar()
     {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
-
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */

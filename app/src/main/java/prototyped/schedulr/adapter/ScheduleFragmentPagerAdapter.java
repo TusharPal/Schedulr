@@ -1,5 +1,6 @@
 package prototyped.schedulr.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -16,16 +17,19 @@ public class ScheduleFragmentPagerAdapter extends FragmentPagerAdapter
                                         "Friday",
                                         "Saturday",
                                         "Sunday"};
+    private Context context;
 
-    public ScheduleFragmentPagerAdapter(FragmentManager fragmentManager)
+    public ScheduleFragmentPagerAdapter(Context context, FragmentManager fragmentManager)
     {
         super(fragmentManager);
+
+        this.context = context;
     }
 
     @Override
     public Fragment getItem(int position)
     {
-        FragmentDaySchedule fragmentDaySchedule = FragmentDaySchedule.newInstance(position, dayNames[position]);
+        FragmentDaySchedule fragmentDaySchedule = FragmentDaySchedule.newInstance(context, position);
 
         return fragmentDaySchedule;
     }
