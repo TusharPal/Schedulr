@@ -14,8 +14,10 @@ public class ScheduleDBDataSource
     private SQLiteDatabase database;
     private String allColumns[] = {ScheduleDBHelper.COLUMN_PROFILE_ICON,
                                     ScheduleDBHelper.COLUMN_PROFILE_NAME,
-                                    ScheduleDBHelper.COLUMN_START_TIME,
-                                    ScheduleDBHelper.COLUMN_END_TIME,
+                                    ScheduleDBHelper.COLUMN_START_HOUR,
+                                    ScheduleDBHelper.COLUMN_START_MINUTE,
+                                    ScheduleDBHelper.COLUMN_END_HOUR,
+                                    ScheduleDBHelper.COLUMN_END_MINUTE,
                                     ScheduleDBHelper.COLUMN_DAY_OF_WEEK};
 
     public ScheduleDBDataSource(Context context)
@@ -39,8 +41,10 @@ public class ScheduleDBDataSource
         ContentValues values = new ContentValues();
         values.put(ScheduleDBHelper.COLUMN_PROFILE_ICON, schedule.PROFILE_ICON);
         values.put(ScheduleDBHelper.COLUMN_PROFILE_NAME, schedule.PROFILE_NAME);
-        values.put(ScheduleDBHelper.COLUMN_START_TIME, schedule.START_TIME);
-        values.put(ScheduleDBHelper.COLUMN_END_TIME, schedule.END_TIME);
+        values.put(ScheduleDBHelper.COLUMN_START_HOUR, schedule.START_HOUR);
+        values.put(ScheduleDBHelper.COLUMN_START_MINUTE, schedule.START_MINUTE);
+        values.put(ScheduleDBHelper.COLUMN_END_HOUR, schedule.END_HOUR);
+        values.put(ScheduleDBHelper.COLUMN_END_MINUTE, schedule.END_MINUTE);
         values.put(ScheduleDBHelper.COLUMN_DAY_OF_WEEK, schedule.DAY_OF_WEEK);
 
         database.insert(ScheduleDBHelper.TABLE_NAME, null, values);
@@ -53,8 +57,10 @@ public class ScheduleDBDataSource
         ContentValues values = new ContentValues();
         values.put(ScheduleDBHelper.COLUMN_PROFILE_ICON, schedule.PROFILE_ICON);
         values.put(ScheduleDBHelper.COLUMN_PROFILE_NAME, schedule.PROFILE_NAME);
-        values.put(ScheduleDBHelper.COLUMN_START_TIME, schedule.START_TIME);
-        values.put(ScheduleDBHelper.COLUMN_END_TIME, schedule.END_TIME);
+        values.put(ScheduleDBHelper.COLUMN_START_HOUR, schedule.START_HOUR);
+        values.put(ScheduleDBHelper.COLUMN_START_MINUTE, schedule.START_MINUTE);
+        values.put(ScheduleDBHelper.COLUMN_END_HOUR, schedule.END_HOUR);
+        values.put(ScheduleDBHelper.COLUMN_END_MINUTE, schedule.END_MINUTE);
         values.put(ScheduleDBHelper.COLUMN_DAY_OF_WEEK, schedule.DAY_OF_WEEK);
 
         database.insert(ScheduleDBHelper.TABLE_NAME, null, values);
@@ -64,7 +70,7 @@ public class ScheduleDBDataSource
 
     public void deleteSchedule(Schedule schedule)
     {
-        database.delete(ScheduleDBHelper.TABLE_NAME, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + schedule.PROFILE_NAME + "\"" + " && " + ScheduleDBHelper.COLUMN_START_TIME + " = " + "\"" + schedule.START_TIME + "\"" + " && " + ScheduleDBHelper.COLUMN_END_TIME + " = " + "\"" + schedule.END_TIME + "\"" + " && " + ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + "\"" + schedule.DAY_OF_WEEK + "\"", null);
+        database.delete(ScheduleDBHelper.TABLE_NAME, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + schedule.PROFILE_NAME + "\"" + " && " + ScheduleDBHelper.COLUMN_START_HOUR + " = " + "\"" + schedule.START_HOUR + "\"" + " && " + ScheduleDBHelper.COLUMN_START_MINUTE + " = " + "\"" + schedule.START_MINUTE + "\"" + " && " + ScheduleDBHelper.COLUMN_END_HOUR + " = " + "\"" + schedule.END_HOUR + "\"" + " && " + ScheduleDBHelper.COLUMN_END_MINUTE + " = " + "\"" + schedule.END_MINUTE + "\"" + " && " + ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + "\"" + schedule.DAY_OF_WEEK + "\"", null);
     }
 
     public List<Schedule> getScheduleList(int dayOfWeek)
@@ -89,9 +95,11 @@ public class ScheduleDBDataSource
 
         schedule.PROFILE_ICON = cursor.getInt(0);
         schedule.PROFILE_NAME = cursor.getString(1);
-        schedule.START_TIME = cursor.getInt(2);
-        schedule.END_TIME = cursor.getInt(3);
-        schedule.DAY_OF_WEEK = cursor.getInt(4);
+        schedule.START_HOUR = cursor.getInt(2);
+        schedule.START_MINUTE = cursor.getInt(3);
+        schedule.END_HOUR = cursor.getInt(4);
+        schedule.END_MINUTE = cursor.getInt(5);
+        schedule.DAY_OF_WEEK = cursor.getInt(6);
 
         return schedule;
     }

@@ -97,17 +97,21 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        Intent intent = new Intent(getActivity(), ActivityProfileCreateEdit.class);
-        intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
-        intent.putExtra("flag_new_profile", false);
-        startActivity(intent);
-        getActivity().finish();
+        if(!alertDialogDelete.isShowing())
+        {
+            Intent intent = new Intent(getActivity(), ActivityProfileCreateEdit.class);
+            intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
+            intent.putExtra("flag_new_profile", false);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
         this.position = position;
+
         alertDialogDelete.show();
 
         return false;
@@ -115,17 +119,16 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
     private AlertDialog alertDialogDelete()
     {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder((getActivity()));
         alertDialogBuilder.setMessage("Delete this profile?");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                dataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
-                list = dataSource.getProfileList();
-                adapter = new ProfileListViewAdapter(getActivity(), list);
-                listView.setAdapter(adapter);
+                dialogInterface.cancel();
+
+                deleteProfile();
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -138,5 +141,13 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
         });
 
         return alertDialogBuilder.create();
+    }
+
+    private void deleteProfile()
+    {
+        dataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
+        list = dataSource.getProfileList();
+        adapter = new ProfileListViewAdapter(getActivity(), list);
+        listView.setAdapter(adapter);
     }
 }

@@ -64,8 +64,8 @@ public class ScheduleListViewAdapter extends BaseAdapter
 
             textViewIcon.setBackgroundResource(list.get(position).PROFILE_ICON);
             textViewProfileName.setText(list.get(position).PROFILE_NAME);
-            textViewStartTime.setText(list.get(position).START_TIME);
-            textViewEndTime.setText(list.get(position).END_TIME);
+            textViewStartTime.setText(list.get(position).START_HOUR + " : " + list.get(position).START_MINUTE);
+            textViewEndTime.setText(list.get(position).END_HOUR + " : " + list.get(position).END_MINUTE);
 
             holder.textViewIcon = textViewIcon;
             holder.textViewProfileName = textViewProfileName;
