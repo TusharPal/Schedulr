@@ -2,15 +2,18 @@ package prototyped.schedulr.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import prototyped.schedulr.activity.ServiceProfileScheduler;
+
 public class ScheduleDBDataSource
 {
+    private Context context;
     private ScheduleDBHelper helper;
     private SQLiteDatabase database;
     private String allColumns[] = {ScheduleDBHelper.COLUMN_PROFILE_ICON,
@@ -23,6 +26,7 @@ public class ScheduleDBDataSource
 
     public ScheduleDBDataSource(Context context)
     {
+        this.context = context;
         helper = new ScheduleDBHelper(context, ScheduleDBHelper.DATABASE_NAME, null, ScheduleDBHelper.DATABASE_VERSION);
     }
 
@@ -58,12 +62,32 @@ public class ScheduleDBDataSource
 
     public void deleteSchedule(String profileName)
     {
-        database.delete(ScheduleDBHelper.TABLE_NAME, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = "  + "\"" + profileName + "\"", null);    }
+        database.delete(ScheduleDBHelper.TABLE_NAME, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = "  + "\"" + profileName + "\"", null);
+        Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+        serviceIntent.putExtra("cancel_alarms", true);
+        context.startService(serviceIntent);
+    }
 
     public List<Schedule> getScheduleList(int dayOfWeek)
     {
         List<Schedule> list = new ArrayList<Schedule>();
         Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + dayOfWeek, null, null, null, null);
+
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast())
+        {
+            list.add(cursorToSchedule(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
+    }
+
+    public List<Schedule> getScheduleList(String profileName)
+    {
+        List<Schedule> list = new ArrayList<Schedule>();
+        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + profileName + "\"", null, null, null, null);
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast())
@@ -93,19 +117,17 @@ public class ScheduleDBDataSource
 
     public int checkIfValidSchedule(Schedule schedule)
     {
-        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + schedule.DAY_OF_WEEK, null, null, null, null);
+        if(((schedule.START_HOUR*100)+schedule.START_MINUTE) > ((schedule.END_HOUR*100)+schedule.END_MINUTE) || ((schedule.START_HOUR*100)+schedule.START_MINUTE) == ((schedule.END_HOUR*100)+schedule.END_MINUTE))
+        {
+            return 1;
+        }
 
+        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + schedule.DAY_OF_WEEK, null, null, null, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast())
         {
             Schedule temp = cursorToSchedule(cursor);
 
-            if(((schedule.START_HOUR*100)+schedule.START_MINUTE) >= ((schedule.END_HOUR*100)+schedule.END_MINUTE))
-            {
-                cursor.close();
-
-                return 1;
-            }
             if(((schedule.START_HOUR*100)+schedule.START_MINUTE) <= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) >= ((temp.END_HOUR*100)+temp.END_MINUTE))
             {
                 cursor.close();

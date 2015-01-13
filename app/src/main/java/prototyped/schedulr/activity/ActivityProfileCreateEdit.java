@@ -154,6 +154,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
                 saveProfile();
 
                 dialog.dismiss();
+                startService(new Intent(getApplicationContext(), ServiceProfileScheduler.class));
                 Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                 intent.putExtra("fragment_number", 2);
                 startActivity(intent);

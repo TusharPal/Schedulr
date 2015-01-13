@@ -1,5 +1,6 @@
 package prototyped.schedulr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +34,10 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
             mNavigationDrawerFragment.selectItem(0);
         }
         mTitle = getTitle();
+
+        Intent serviceIntent = new Intent(this, ServiceProfileScheduler.class);
+        serviceIntent.putExtra("cancel_alarms", false);
+        startService(serviceIntent);
     }
 
     @Override

@@ -3,6 +3,7 @@ package prototyped.schedulr.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -66,14 +67,11 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         View rootView = inflater.inflate(R.layout.fragment_day, container, false);
 
         list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-        if(list.size() != 0)
-        {
-            listViewSchedule = (ListView) rootView.findViewById(R.id.listView_fragment_day);
-            scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-            listViewSchedule.setAdapter(scheduleListViewAdapter);
-            listViewSchedule.setOnItemClickListener(this);
-            listViewSchedule.setOnItemLongClickListener(this);
-        }
+        listViewSchedule = (ListView) rootView.findViewById(R.id.listView_fragment_day);
+        scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
+        listViewSchedule.setAdapter(scheduleListViewAdapter);
+        listViewSchedule.setOnItemClickListener(this);
+        listViewSchedule.setOnItemLongClickListener(this);
 
         return rootView;
     }
@@ -88,19 +86,14 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
 
     public void onResume()
     {
-        super.onResume();
-
         scheduleDBDataSource.open();
         profileDBDataSource.open();
 
         list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-        if(list.size() != 0)
-        {
-            scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-            listViewSchedule.setAdapter(scheduleListViewAdapter);
-            listViewSchedule.setOnItemClickListener(this);
-            listViewSchedule.setOnItemLongClickListener(this);
-        }
+        scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
+        listViewSchedule.setAdapter(scheduleListViewAdapter);
+
+        super.onResume();
     }
 
     private AlertDialog alertDialogDeleteSchedule()
@@ -113,12 +106,13 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
             public void onClick(DialogInterface dialogInterface, int which)
             {
                 scheduleDBDataSource.deleteSchedule(list.get(position));
+                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                serviceIntent.putExtra("cancel_alarms", true);
+                context.startService(serviceIntent);
+
                 list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-                if(list.size() != 0)
-                {
-                    scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), list);
-                    listViewSchedule.setAdapter(scheduleListViewAdapter);
-                }
+                scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
+                listViewSchedule.setAdapter(scheduleListViewAdapter);
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -176,12 +170,17 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
                     {
                         scheduleDBDataSource.createSchedule(newSchedule);
 
+                        Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                        serviceIntent.putExtra("cancel_alarms", true);
+                        context.startService(serviceIntent);
+
+                        onResume();
                         dialogInterface.cancel();
                         break;
                     }
                     case 1:
                     {
-                        Toast.makeText(context, "Schedule not saved. Start time cannot be later than end time.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Schedule not saved.  Start time cannot be later than or equal to end time", Toast.LENGTH_SHORT).show();
                         scheduleDBDataSource.createSchedule(oldSchedule);
 
                         dialogInterface.cancel();

@@ -52,7 +52,11 @@ public class ScheduleListViewAdapter extends BaseAdapter
         TextView textViewStartTime;
         TextView textViewEndTime;
 
-        if(view == null)
+        if(list.size() == 0)
+        {
+            view = inflater.inflate(R.layout.list_item_empty_fragment_day_schedule, viewGroup, false);
+        }
+        else if(view == null)
         {
             holder = new ViewHolder();
 

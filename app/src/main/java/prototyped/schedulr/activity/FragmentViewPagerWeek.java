@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -38,7 +39,7 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
     private AlertDialog alertDialogAddSchedule;
     private ScheduleDBDataSource scheduleDBDataSource;
     private ProfileDBDataSource profileDBDataSource;
-    private Schedule oldSchedule;
+    private Schedule newSchedule;
     private Spinner spinner;
     private TimePicker startTimePicker;
     private TimePicker endTimePicker;
@@ -63,23 +64,14 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
         scheduleDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
-        oldSchedule = new Schedule();
         alertDialogAddSchedule = alertDialogAddSchedule();
 
         View rootView = inflater.inflate(R.layout.fragment_view_pager_week, container, false);
         viewPager = (ViewPager)rootView.findViewById(R.id.viewpager_fragment_view_pager_week);
         scheduleFragmentPagerAdapter = new ScheduleFragmentPagerAdapter(context, getFragmentManager());
         viewPager.setAdapter(scheduleFragmentPagerAdapter);
-        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-        {
-            viewPager.setCurrentItem(6, true);
-        }
-        else
-        {
-            viewPager.setCurrentItem(calendar.get(Calendar.DAY_OF_WEEK)-2, true);
-        }
         viewPager.setOffscreenPageLimit(1);
-
+        viewPager.setCurrentItem(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY?6:(calendar.get(Calendar.DAY_OF_WEEK)-2), true);
 
         return rootView;
     }
@@ -98,6 +90,7 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
 
         scheduleDBDataSource.open();
         profileDBDataSource.open();
+        viewPager.setCurrentItem(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY?6:(calendar.get(Calendar.DAY_OF_WEEK)-2), true);
     }
 
     public void onPause()
@@ -157,27 +150,32 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                oldSchedule.PROFILE_NAME = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_NAME;
-                oldSchedule.PROFILE_ICON = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_ICON;
-                oldSchedule.START_HOUR = startTimePicker.getCurrentHour();
-                oldSchedule.START_MINUTE = startTimePicker.getCurrentMinute();
-                oldSchedule.END_HOUR = endTimePicker.getCurrentHour();
-                oldSchedule.END_MINUTE = endTimePicker.getCurrentMinute();
-                oldSchedule.DAY_OF_WEEK = viewPager.getCurrentItem();
+                newSchedule = new Schedule();
+                newSchedule.PROFILE_NAME = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_NAME;
+                newSchedule.PROFILE_ICON = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_ICON;
+                newSchedule.START_HOUR = startTimePicker.getCurrentHour();
+                newSchedule.START_MINUTE = startTimePicker.getCurrentMinute();
+                newSchedule.END_HOUR = endTimePicker.getCurrentHour();
+                newSchedule.END_MINUTE = endTimePicker.getCurrentMinute();
+                newSchedule.DAY_OF_WEEK = viewPager.getCurrentItem();
 
-                switch(scheduleDBDataSource.checkIfValidSchedule(oldSchedule))
+                switch(scheduleDBDataSource.checkIfValidSchedule(newSchedule))
                 {
                     case 0:
                     {
-                        scheduleDBDataSource.createSchedule(oldSchedule);
+                        scheduleDBDataSource.createSchedule(newSchedule);
                         scheduleFragmentPagerAdapter.notifyDataSetChanged();
+
+                        Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                        serviceIntent.putExtra("cancel_alarms", true);
+                        context.startService(serviceIntent);
 
                         dialogInterface.cancel();
                         break;
                     }
                     case 1:
                     {
-                        Toast.makeText(context, "Schedule not saved. End time cannot be earlier than start time.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Schedule not saved. Start time cannot be later than or equal to end time.", Toast.LENGTH_SHORT).show();
 
                         dialogInterface.cancel();
                         break;
@@ -189,7 +187,6 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
                         dialogInterface.cancel();
                         break;
                     }
-
                 }
             }
         });
