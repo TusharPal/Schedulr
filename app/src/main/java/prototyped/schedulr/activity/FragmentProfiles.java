@@ -22,11 +22,13 @@ import prototyped.schedulr.R;
 import prototyped.schedulr.adapter.ProfileListViewAdapter;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
+import prototyped.schedulr.database.ScheduleDBDataSource;
 
 public class FragmentProfiles extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
     private static final String NAVIGATION_DRAWER_POSITION = "position";
-    private static ProfileDBDataSource dataSource;
+    private ProfileDBDataSource profileDBDataSource;
+    private ScheduleDBDataSource scheduleDBDataSource;
     private List<Profile> list;
     private static Context context;
     private int position;
@@ -41,8 +43,6 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
         Bundle args = new Bundle();
         args.putInt(NAVIGATION_DRAWER_POSITION, position);
         fragmentProfiles.setArguments(args);
-        dataSource = new ProfileDBDataSource(context);
-        dataSource.open();
 
         return fragmentProfiles;
     }
@@ -51,7 +51,11 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     {
         setHasOptionsMenu(true);
         alertDialogDelete = alertDialogDelete();
-        list=dataSource.getProfileList();
+        profileDBDataSource = new ProfileDBDataSource(context);
+        profileDBDataSource.open();
+        scheduleDBDataSource = new ScheduleDBDataSource(context);
+        scheduleDBDataSource.open();
+        list=profileDBDataSource.getProfileList();
 
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
         adapter = new ProfileListViewAdapter(getActivity(), list);
@@ -68,6 +72,22 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     {
         super.onAttach(activity);
         ((ActivityMain)activity).onSectionAttached(getArguments().getInt(NAVIGATION_DRAWER_POSITION));
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+
+        profileDBDataSource.open();
+        scheduleDBDataSource.open();
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+
+        profileDBDataSource.close();
+        scheduleDBDataSource.close();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
@@ -120,7 +140,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     private AlertDialog alertDialogDelete()
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder((getActivity()));
-        alertDialogBuilder.setMessage("Delete this profile?");
+        alertDialogBuilder.setMessage("Delete this profile? All schedules using this profile will be deleted as well.");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
         {
             @Override
@@ -145,8 +165,9 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
     private void deleteProfile()
     {
-        dataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
-        list = dataSource.getProfileList();
+        scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
+        profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
+        list = profileDBDataSource.getProfileList();
         adapter = new ProfileListViewAdapter(getActivity(), list);
         listView.setAdapter(adapter);
     }

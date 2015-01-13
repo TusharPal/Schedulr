@@ -34,6 +34,11 @@ public class ScheduleFragmentPagerAdapter extends FragmentPagerAdapter
         return fragmentDaySchedule;
     }
 
+    public int getItemPosition(Object object)
+    {
+        return POSITION_NONE;
+    }
+
     @Override
     public int getCount()
     {

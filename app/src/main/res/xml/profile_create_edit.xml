@@ -48,6 +48,12 @@
             android:title="Notification tone"
             android:key="profile_notification_tone"
             android:ringtoneType="notification" />
+
+        <ListPreference
+            android:title="Ring mode"
+            android:key="profile_ring_mode"
+            android:entries="@array/listPreference_ring_mode_entries"
+            android:entryValues="@array/listPreference_ring_mode_values"/>
     </PreferenceCategory>
 
     <PreferenceCategory

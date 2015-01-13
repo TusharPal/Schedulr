@@ -24,7 +24,14 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
         fragmentManager = getSupportFragmentManager();
         mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout)findViewById(R.id.drawer_layout));
-        mNavigationDrawerFragment.selectItem(0);
+        if(getIntent().getExtras() != null)
+        {
+            mNavigationDrawerFragment.selectItem(getIntent().getExtras().getInt("fragment_number"));
+        }
+        else
+        {
+            mNavigationDrawerFragment.selectItem(0);
+        }
         mTitle = getTitle();
     }
 
@@ -52,8 +59,6 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
                 break;
             }
         }
-
-
     }
 
     public void onSectionAttached(int position)

@@ -10,7 +10,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import prototyped.schedulr.R;
 import prototyped.schedulr.database.Profile;
@@ -41,12 +40,15 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
     {
         super.onResume();
 
+        dataSource.open();
         setPreferences();
     }
 
     protected void onPause()
     {
         super.onPause();
+
+        dataSource.close();
     }
 
     public void onBackPressed()
@@ -202,19 +204,21 @@ public class ActivityProfileCreateEdit extends PreferenceActivity implements Pre
         public void onPause()
         {
             super.onPause();
+
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
 
         public void onResume()
         {
             super.onResume();
+
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s)
         {
-            Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+
         }
     }
 }

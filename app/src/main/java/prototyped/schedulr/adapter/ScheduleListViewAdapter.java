@@ -64,8 +64,8 @@ public class ScheduleListViewAdapter extends BaseAdapter
 
             textViewIcon.setBackgroundResource(list.get(position).PROFILE_ICON);
             textViewProfileName.setText(list.get(position).PROFILE_NAME);
-            textViewStartTime.setText(list.get(position).START_HOUR + " : " + list.get(position).START_MINUTE);
-            textViewEndTime.setText(list.get(position).END_HOUR + " : " + list.get(position).END_MINUTE);
+            textViewStartTime.setText(getTimeStamp(list.get(position).START_HOUR, list.get(position).START_MINUTE));
+            textViewEndTime.setText(getTimeStamp(list.get(position).END_HOUR, list.get(position).END_MINUTE));
 
             holder.textViewIcon = textViewIcon;
             holder.textViewProfileName = textViewProfileName;
@@ -92,6 +92,78 @@ public class ScheduleListViewAdapter extends BaseAdapter
         return view;
     }
 
+    private String getTimeStamp(int hour, int minute)
+    {
+        String s= "";
+
+        if(android.text.format.DateFormat.is24HourFormat(context))
+        {
+            if(hour == 0)
+            {
+                s += "00 : ";
+            }
+            else if(hour>0 && hour<10)
+            {
+                s += "0" + hour + " : ";
+            }
+            else
+            {
+                s += hour + " : ";
+            }
+
+            if(minute == 0)
+            {
+                s += "00";
+            }
+            else if(minute >0 && minute<10)
+            {
+                s += "0" + minute;
+            }
+            else
+            {
+                s += minute;
+            }
+        }
+        else
+        {
+            if(hour == 0)
+            {
+                s += "12 : ";
+            }
+            else if(hour > 0 && hour < 13)
+            {
+                s += hour + " : ";
+            }
+            else
+            {
+                s += (hour - 12) + " : ";
+            }
+
+            if(minute == 0)
+            {
+                s += "00";
+            }
+            else if(minute > 0 && minute < 10)
+            {
+                s += "0" + minute;
+            }
+            else
+            {
+                s += minute;
+            }
+
+            if(hour<12)
+            {
+                s += " AM";
+            }
+            else
+            {
+                s += " PM";
+            }
+        }
+
+        return s;
+    }
     static class ViewHolder
     {
         TextView textViewIcon;
