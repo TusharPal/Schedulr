@@ -17,5 +17,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:name="prototyped.schedulr.activity.NavigationDrawerFragment"
-        tools:layout="@layout/fragment_navigation_drawer_activity_main"/>
+        tools:layout="@layout/fragment_navigation_drawer_activity_main"
+        android:background="@color/background_material_dark"/>
 </android.support.v4.widget.DrawerLayout>

@@ -10,19 +10,17 @@ import android.widget.TextView;
 import java.util.List;
 
 import prototyped.schedulr.R;
-import prototyped.schedulr.database.Schedule;
+import prototyped.schedulr.database.Event;
 
-public class ScheduleListViewAdapter extends BaseAdapter
+public class EventListViewAdapter extends BaseAdapter
 {
+    private List<Event> list;
     private Context context;
-    private List<Schedule> list;
-    private LayoutInflater inflater;
 
-    public ScheduleListViewAdapter(Context context, List<Schedule> list)
+    public EventListViewAdapter(Context context, List<Event> list)
     {
         this.context = context;
         this.list = list;
-        inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -47,30 +45,26 @@ public class ScheduleListViewAdapter extends BaseAdapter
     public View getView(int position, View view, ViewGroup viewGroup)
     {
         ViewHolder holder;
-        TextView textViewIcon;
-        TextView textViewProfileName;
+        TextView textViewTitle;
         TextView textViewStartTime;
-        TextView textViewEndTime;
+        TextView textViewDate;
 
         if(view == null)
         {
             holder = new ViewHolder();
+            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.list_item_fragment_events, viewGroup, false);
+            textViewTitle = (TextView)view.findViewById(R.id.textView_title_list_item_fragment_events);
+            textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_events);
+            textViewDate = (TextView)view.findViewById(R.id.textView_date_list_item_fragment_events);
 
-            view = inflater.inflate(R.layout.list_item_fragment_day_schedule, viewGroup, false);
-            textViewIcon = (TextView)view.findViewById(R.id.textView_icon_list_item_fragment_day_schedule);
-            textViewProfileName = (TextView)view.findViewById(R.id.textView_profile_name_list_item_fragment_day_schedule);
-            textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_day_schedule);
-            textViewEndTime = (TextView)view.findViewById(R.id.textView_end_time_list_item_fragment_day_schedule);
+            textViewTitle.setText(list.get(position).EVENT_TITLE);
+            textViewStartTime.setText(getTimeStamp(list.get(position).EVENT_START_HOUR, list.get(position).EVENT_START_MINUTE));
+            textViewDate.setText(getDateStamp(list.get(position).EVENT_DAY_OF_MONTH, list.get(position).EVENT_MONTH, list.get(position).EVENT_YEAR));
 
-            textViewIcon.setBackgroundResource(list.get(position).PROFILE_ICON);
-            textViewProfileName.setText(list.get(position).PROFILE_NAME);
-            textViewStartTime.setText(getTimeStamp(list.get(position).START_HOUR, list.get(position).START_MINUTE));
-            textViewEndTime.setText(getTimeStamp(list.get(position).END_HOUR, list.get(position).END_MINUTE));
-
-            holder.textViewIcon = textViewIcon;
-            holder.textViewProfileName = textViewProfileName;
+            holder.textViewTitle = textViewTitle;
             holder.textViewStartTime = textViewStartTime;
-            holder.textViewEndTime = textViewEndTime;
+            holder.textViewDate = textViewDate;
 
             view.setTag(holder);
         }
@@ -78,15 +72,13 @@ public class ScheduleListViewAdapter extends BaseAdapter
         {
             holder = (ViewHolder)view.getTag();
 
-            textViewIcon = (TextView)view.findViewById(R.id.textView_icon_list_item_fragment_day_schedule);
-            textViewProfileName = (TextView)view.findViewById(R.id.textView_profile_name_list_item_fragment_day_schedule);
-            textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_day_schedule);
-            textViewEndTime = (TextView)view.findViewById(R.id.textView_end_time_list_item_fragment_day_schedule);
+            textViewTitle = (TextView)view.findViewById(R.id.textView_title_list_item_fragment_events);
+            textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_events);
+            textViewDate = (TextView)view.findViewById(R.id.textView_date_list_item_fragment_events);
 
-            textViewIcon = holder.textViewIcon;
-            textViewProfileName = holder.textViewProfileName;
+            textViewTitle = holder.textViewTitle;
             textViewStartTime = holder.textViewStartTime;
-            textViewEndTime = holder.textViewEndTime;
+            textViewDate = holder.textViewDate;
         }
 
         return view;
@@ -165,11 +157,36 @@ public class ScheduleListViewAdapter extends BaseAdapter
         return s;
     }
 
+    private String getDateStamp(int dayOfMonth, int month, int year)
+    {
+        String s = "";
+        String monthNames[] = {"Jan", "Feb", "Mar", "Apr", "May", "June",
+                                "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+        if(dayOfMonth%10 == 1)
+        {
+            s= s + dayOfMonth + "st " + monthNames[month-1] + ", " + year;
+        }
+        else if(dayOfMonth%10 == 2)
+        {
+            s= s + dayOfMonth + "nd " + monthNames[month-1] + ", " + year;
+        }
+        else if(dayOfMonth%10 == 3)
+        {
+            s= s + dayOfMonth + "rd " + monthNames[month-1] + ", " + year;
+        }
+        else
+        {
+            s= s + dayOfMonth + "th " + monthNames[month-1] + ", " + year;
+        }
+
+        return  s;
+    }
+
     static class ViewHolder
     {
-        TextView textViewIcon;
-        TextView textViewProfileName;
+        TextView textViewTitle;
         TextView textViewStartTime;
-        TextView textViewEndTime;
+        TextView textViewDate;
     }
 }

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -32,9 +34,11 @@ import prototyped.schedulr.database.ScheduleDBDataSource;
 public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnItemSelectedListener
 {
     private static final String NAVIGATION_DRAWER_POSITION = "position";
+    private final String dayNames[] = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
     private static Context context;
     private Calendar calendar = Calendar.getInstance();
     private ViewPager viewPager;
+    private PagerTabStrip pagerTabStrip;
     private ScheduleFragmentPagerAdapter scheduleFragmentPagerAdapter;
     private AlertDialog alertDialogAddSchedule;
     private ScheduleDBDataSource scheduleDBDataSource;
@@ -43,6 +47,7 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
     private Spinner spinner;
     private TimePicker startTimePicker;
     private TimePicker endTimePicker;
+    private CheckBox checkBoxDay[] = new CheckBox[7];
     private int spinnerPosition = 0;
 
     public static final FragmentViewPagerWeek newInstance(Context c, int position)
@@ -64,10 +69,12 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
         scheduleDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
-        alertDialogAddSchedule = alertDialogAddSchedule();
 
         View rootView = inflater.inflate(R.layout.fragment_view_pager_week, container, false);
         viewPager = (ViewPager)rootView.findViewById(R.id.viewpager_fragment_view_pager_week);
+        pagerTabStrip = (PagerTabStrip)rootView.findViewById(R.id.pagertabstrip_fragment_view_pager_week);
+        pagerTabStrip.setDrawFullUnderline(true);
+        pagerTabStrip.setTabIndicatorColorResource(android.R.color.holo_blue_dark);
         scheduleFragmentPagerAdapter = new ScheduleFragmentPagerAdapter(context, getFragmentManager());
         viewPager.setAdapter(scheduleFragmentPagerAdapter);
         viewPager.setOffscreenPageLimit(1);
@@ -119,6 +126,7 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
                 }
                 else
                 {
+                    alertDialogAddSchedule = alertDialogAddSchedule();
                     alertDialogAddSchedule.show();
                 }
 
@@ -136,6 +144,14 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
         spinner = (Spinner)view.findViewById(R.id.spinner_profilelist_alertdialog_create_edit_schedule);
         startTimePicker = (TimePicker)view.findViewById(R.id.timePicker_start_alertdialog_create_edit_schedule);
         endTimePicker = (TimePicker)view.findViewById(R.id.timePicker_end_alertdialog_create_edit_schedule);
+        checkBoxDay[0] = (CheckBox)view.findViewById(R.id.checkBox_monday_alertdialog_create_edit_schedule);
+        checkBoxDay[1] = (CheckBox)view.findViewById(R.id.checkBox_tuesday_alertdialog_create_edit_schedule);
+        checkBoxDay[2] = (CheckBox)view.findViewById(R.id.checkBox_wednesday_alertdialog_create_edit_schedule);
+        checkBoxDay[3] = (CheckBox)view.findViewById(R.id.checkBox_thursday_alertdialog_create_edit_schedule);
+        checkBoxDay[4] = (CheckBox)view.findViewById(R.id.checkBox_friday_alertdialog_create_edit_schedule);
+        checkBoxDay[5] = (CheckBox)view.findViewById(R.id.checkBox_saturday_alertdialog_create_edit_schedule);
+        checkBoxDay[6] = (CheckBox)view.findViewById(R.id.checkBox_sunday_alertdialog_create_edit_schedule);
+        checkBoxDay[viewPager.getCurrentItem()].setChecked(true);
 
         ProfileListViewAdapter profileListViewAdapter = new ProfileListViewAdapter(context, profileDBDataSource.getProfileList());
         spinner.setAdapter(profileListViewAdapter);
@@ -159,11 +175,24 @@ public class FragmentViewPagerWeek extends Fragment implements AdapterView.OnIte
                 newSchedule.END_MINUTE = endTimePicker.getCurrentMinute();
                 newSchedule.DAY_OF_WEEK = viewPager.getCurrentItem();
 
-                switch(scheduleDBDataSource.checkIfValidSchedule(newSchedule))
+                boolean itemChecked[] = new boolean[7];
+                for(int index=0; index<7; index++)
+                {
+                    itemChecked[index] = checkBoxDay[index].isChecked();
+                }
+
+                switch(scheduleDBDataSource.checkIfValidSchedule(newSchedule, itemChecked))
                 {
                     case 0:
                     {
-                        scheduleDBDataSource.createSchedule(newSchedule);
+                        for(int dayOfWeek=0; dayOfWeek<7; dayOfWeek++)
+                        {
+                            if(itemChecked[dayOfWeek])
+                            {
+                                newSchedule.DAY_OF_WEEK = dayOfWeek;
+                                scheduleDBDataSource.createSchedule(newSchedule);
+                            }
+                        }
                         scheduleFragmentPagerAdapter.notifyDataSetChanged();
 
                         Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);

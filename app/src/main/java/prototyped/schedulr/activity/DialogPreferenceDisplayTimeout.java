@@ -6,19 +6,24 @@ import android.content.DialogInterface;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.NumberPicker;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import prototyped.schedulr.R;
 
-public class DialogPreferenceDisplayTimeout extends DialogPreference implements DialogInterface.OnClickListener, NumberPicker.OnValueChangeListener
+public class DialogPreferenceDisplayTimeout extends DialogPreference implements DialogInterface.OnClickListener
 {
-    private NumberPicker numberPickerMinute;
-    private NumberPicker numberPickerSecond;
+    private Context context;
+    private final String options[] = {"10 seconds", "20 seconds", "30 seconds", "1 minute", "2 minutes", "5 minutes", "10 minutes", "20 minutes", "30 minutes", "1 hour"};
+    private final int timePeriods[] = {10000, 20000, 30000, 60000, 120000, 300000, 600000, 1200000, 1800000, 3600000};
+    private ListView listView;
 
     public DialogPreferenceDisplayTimeout(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         setDialogLayoutResource(R.layout.dialogpreference_display_timeout);
+
+        this.context = context;
     }
 
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder)
@@ -29,20 +34,76 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
         super.onPrepareDialogBuilder(builder);
     }
 
-    @Override
     public void onBindDialogView(View view)
     {
-        numberPickerMinute = (NumberPicker)view.findViewById(R.id.numberPicker_minute_dialogpreference_display_timeout);
-        numberPickerSecond = (NumberPicker)view.findViewById(R.id.numberPicker_second_dialogpreference_display_timeout);
+        listView = (ListView)view.findViewById(R.id.listView_dialogpreference_display_timeout);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, android.R.id.text1, options);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        switch(getPreferenceManager().getSharedPreferences().getInt("profile_display_timeout", 30000))
+        {
+            case 10000:
+            {
+                listView.setItemChecked(0, true);
 
-        numberPickerMinute.setMinValue(0);
-        numberPickerSecond.setMinValue(0);
-        numberPickerMinute.setMaxValue(59);
-        numberPickerSecond.setMaxValue(59);
-        numberPickerMinute.setWrapSelectorWheel(true);
-        numberPickerSecond.setWrapSelectorWheel(true);
-        numberPickerMinute.setOnValueChangedListener(this);
-        numberPickerSecond.setOnValueChangedListener(this);
+                break;
+            }
+            case 20000:
+            {
+                listView.setItemChecked(1, true);
+
+                break;
+            }
+            case 30000:
+            {
+                listView.setItemChecked(2, true);
+
+                break;
+            }
+            case 60000:
+            {
+                listView.setItemChecked(3, true);
+
+                break;
+            }
+            case 120000:
+            {
+                listView.setItemChecked(4, true);
+
+                break;
+            }
+            case 300000:
+            {
+                listView.setItemChecked(5, true);
+
+                break;
+            }
+            case 600000:
+            {
+                listView.setItemChecked(6, true);
+
+                break;
+            }
+            case 1200000:
+            {
+                listView.setItemChecked(7, true);
+
+                break;
+            }
+            case 1800000:
+            {
+                listView.setItemChecked(8, true);
+
+                break;
+            }
+            case 3600000:
+            {
+                listView.setItemChecked(9, true);
+
+                break;
+            }
+        }
+
         super.onBindDialogView(view);
     }
 
@@ -51,13 +112,7 @@ public class DialogPreferenceDisplayTimeout extends DialogPreference implements 
     {
         if(id == DialogInterface.BUTTON_POSITIVE)
         {
-            getPreferenceManager().getSharedPreferences().edit().putInt("profile_display_timeout", (numberPickerMinute.getValue()*60)+numberPickerSecond.getValue());
+            getPreferenceManager().getSharedPreferences().edit().putInt("profile_display_timeout", timePeriods[listView.getCheckedItemPosition()]).apply();
         }
-    }
-
-    @Override
-    public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue)
-    {
-
     }
 }

@@ -2,14 +2,11 @@ package prototyped.schedulr.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import prototyped.schedulr.activity.ServiceProfileScheduler;
 
 public class ScheduleDBDataSource
 {
@@ -63,15 +60,12 @@ public class ScheduleDBDataSource
     public void deleteSchedule(String profileName)
     {
         database.delete(ScheduleDBHelper.TABLE_NAME, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = "  + "\"" + profileName + "\"", null);
-        Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-        serviceIntent.putExtra("cancel_alarms", true);
-        context.startService(serviceIntent);
     }
 
     public List<Schedule> getScheduleList(int dayOfWeek)
     {
         List<Schedule> list = new ArrayList<Schedule>();
-        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + dayOfWeek, null, null, null, null);
+        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + dayOfWeek, null, null, null, ScheduleDBHelper.COLUMN_START_HOUR + " ASC, " + ScheduleDBHelper.COLUMN_START_MINUTE + " ASC");
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast())
@@ -113,6 +107,59 @@ public class ScheduleDBDataSource
         schedule.DAY_OF_WEEK = cursor.getInt(6);
 
         return schedule;
+    }
+
+    public int checkIfValidSchedule(Schedule schedule, boolean itemChecked[])
+    {
+        if(((schedule.START_HOUR*100)+schedule.START_MINUTE) > ((schedule.END_HOUR*100)+schedule.END_MINUTE) || ((schedule.START_HOUR*100)+schedule.START_MINUTE) == ((schedule.END_HOUR*100)+schedule.END_MINUTE))
+        {
+            return 1;
+        }
+
+        for(int dayOfWeek=0; dayOfWeek<7; dayOfWeek++)
+        {
+            if(itemChecked[dayOfWeek])
+            {
+                Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_DAY_OF_WEEK + " = " + dayOfWeek, null, null, null, null);
+                cursor.moveToFirst();
+                while(!cursor.isAfterLast())
+                {
+                    Schedule temp = cursorToSchedule(cursor);
+
+                    if(((schedule.START_HOUR*100)+schedule.START_MINUTE) <= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) >= ((temp.END_HOUR*100)+temp.END_MINUTE))
+                    {
+                        cursor.close();
+
+                        return 2;
+                    }
+                    else if(((schedule.START_HOUR*100)+schedule.START_MINUTE) <= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) >= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) <= ((temp.END_HOUR*100)+temp.END_MINUTE))
+                    {
+                        cursor.close();
+
+                        return 2;
+                    }
+                    else if(((schedule.START_HOUR*100)+schedule.START_MINUTE) >= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.START_HOUR*100)+schedule.START_MINUTE) <= ((temp.END_HOUR*100)+temp.END_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) >= ((temp.END_HOUR*100)+temp.END_MINUTE))
+                    {
+                        cursor.close();
+
+                        return 2;
+                    }
+                    else if(((schedule.START_HOUR*100)+schedule.START_MINUTE) >= ((temp.START_HOUR*100)+temp.START_MINUTE) && ((schedule.END_HOUR*100)+schedule.END_MINUTE) <= ((temp.END_HOUR*100)+temp.END_MINUTE))
+                    {
+                        cursor.close();
+
+                        return 2;
+                    }
+                    else
+                    {
+                        cursor.moveToNext();
+                    }
+                }
+                cursor.close();
+            }
+        }
+
+        return 0;
     }
 
     public int checkIfValidSchedule(Schedule schedule)

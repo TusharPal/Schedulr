@@ -5,14 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView_icon_list_item_fragment_day_schedule"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:background="@drawable/ic_profile_01"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+    <LinearLayout
+        android:id="@+id/linearLayout_icon_list_item_fragment_day_schedule"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/textView_icon_list_item_fragment_day_schedule"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:background="@drawable/ic_profile_01"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView_divider_list_item_fragment_day_schedule"
@@ -21,7 +29,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:layout_marginRight="4dp"
-        android:layout_toRightOf="@+id/textView_icon_list_item_fragment_day_schedule"
+        android:layout_toRightOf="@+id/linearLayout_icon_list_item_fragment_day_schedule"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@android:color/white"/>

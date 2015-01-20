@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="listPreference_ring_mode_entries">
-        <item>Normal</item>
-        <item>Vibrate</item>
-        <item>Mute</item>
-    </string-array>
+    <array name="spinner_start_time">
+        <item>Select start time</item>
+    </array>
 
-    <string-array name="listPreference_ring_mode_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
+    <array name="spinner_end_time">
+        <item>Select end time</item>
+    </array>
+
+    <array name="spinner_date">
+        <item>Select date</item>
+    </array>
 </resources>

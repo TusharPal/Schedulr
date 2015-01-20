@@ -30,13 +30,20 @@
         <activity
             android:name=".activity.ActivityProfileCreateEdit"
             android:configChanges="keyboardHidden|layoutDirection|orientation|screenLayout"/>
+        <activity
+            android:name=".activity.ActivityEventEditor"
+            android:configChanges="keyboardHidden|layoutDirection|orientation|screenLayout"/>
+
         <service
             android:name=".activity.ServiceProfileScheduler"
             android:icon="@drawable/ic_launcher"
             android:label="Schedulr"
             android:enabled="true"/>
         <receiver
-            android:name=".activity.BroadcastReceiverAlarm"
+            android:name=".activity.BroadcastReceiverScheduleAlarms"
+            android:enabled="true" />
+        <receiver
+            android:name=".activity.BroadcastReceiverServiceAlarms"
             android:enabled="true" />
     </application>
 </manifest>

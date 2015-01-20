@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
@@ -25,7 +26,7 @@ import prototyped.schedulr.database.ProfileDBDataSource;
 import prototyped.schedulr.database.Schedule;
 import prototyped.schedulr.database.ScheduleDBDataSource;
 
-public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AdapterView.OnItemSelectedListener
+public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener
 {
     private static final String DAY_OF_WEEK = "dayOfWeek";
     private static Context context;
@@ -34,14 +35,15 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
     private ListView listViewSchedule;
     private ScheduleListViewAdapter scheduleListViewAdapter;
     private AlertDialog alertDialogDeleteSchedule;
-    private AlertDialog alertDialogEditSchedule;
+    private AlertDialog alertDialogEditDeleteSchedule;
     private List<Schedule> list;
     private int position;
     private Spinner spinner;
     private TimePicker startTimePicker;
     private TimePicker endTimePicker;
+    private CheckBox checkBoxDay[] = new CheckBox[7];
     private int spinnerPosition = 0;
-    private int schedulePosition =0;
+    private int schedulePosition = 0;
     private Schedule oldSchedule;
     private Schedule newSchedule;
 
@@ -63,7 +65,6 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         scheduleDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
-        alertDialogDeleteSchedule = alertDialogDeleteSchedule();
         View rootView = inflater.inflate(R.layout.fragment_day, container, false);
 
         list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
@@ -71,7 +72,6 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
         listViewSchedule.setAdapter(scheduleListViewAdapter);
         listViewSchedule.setOnItemClickListener(this);
-        listViewSchedule.setOnItemLongClickListener(this);
 
         return rootView;
     }
@@ -96,6 +96,26 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         super.onResume();
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+    {
+        this.schedulePosition = position;
+        alertDialogEditDeleteSchedule = alertDialogEditDeleteSchedule();
+        alertDialogEditDeleteSchedule.show();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
+    {
+        this.spinnerPosition = position;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView)
+    {
+        this.spinnerPosition = 0;
+    }
+
     private AlertDialog alertDialogDeleteSchedule()
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -106,13 +126,14 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
             public void onClick(DialogInterface dialogInterface, int which)
             {
                 scheduleDBDataSource.deleteSchedule(list.get(position));
-                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                serviceIntent.putExtra("cancel_alarms", true);
-                context.startService(serviceIntent);
 
                 list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
                 scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
                 listViewSchedule.setAdapter(scheduleListViewAdapter);
+
+                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                serviceIntent.putExtra("cancel_alarms", true);
+                context.startService(serviceIntent);
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -127,7 +148,7 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         return alertDialogBuilder.create();
     }
 
-    private AlertDialog alertDialogEditSchedule()
+    private AlertDialog alertDialogEditDeleteSchedule()
     {
         oldSchedule = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK)).get(schedulePosition);
         newSchedule = new Schedule();
@@ -137,6 +158,18 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         spinner = (Spinner)view.findViewById(R.id.spinner_profilelist_alertdialog_create_edit_schedule);
         startTimePicker = (TimePicker)view.findViewById(R.id.timePicker_start_alertdialog_create_edit_schedule);
         endTimePicker = (TimePicker)view.findViewById(R.id.timePicker_end_alertdialog_create_edit_schedule);
+        checkBoxDay[0] = (CheckBox)view.findViewById(R.id.checkBox_monday_alertdialog_create_edit_schedule);
+        checkBoxDay[1] = (CheckBox)view.findViewById(R.id.checkBox_tuesday_alertdialog_create_edit_schedule);
+        checkBoxDay[2] = (CheckBox)view.findViewById(R.id.checkBox_wednesday_alertdialog_create_edit_schedule);
+        checkBoxDay[3] = (CheckBox)view.findViewById(R.id.checkBox_thursday_alertdialog_create_edit_schedule);
+        checkBoxDay[4] = (CheckBox)view.findViewById(R.id.checkBox_friday_alertdialog_create_edit_schedule);
+        checkBoxDay[5] = (CheckBox)view.findViewById(R.id.checkBox_saturday_alertdialog_create_edit_schedule);
+        checkBoxDay[6] = (CheckBox)view.findViewById(R.id.checkBox_sunday_alertdialog_create_edit_schedule);
+        checkBoxDay[getArguments().getInt(DAY_OF_WEEK)].setChecked(true);
+        for(int index=0; index<7; index++)
+        {
+            checkBoxDay[index].setEnabled(false);
+        }
 
         ProfileListViewAdapter profileListViewAdapter = new ProfileListViewAdapter(context, profileDBDataSource.getProfileList());
         spinner.setAdapter(profileListViewAdapter);
@@ -150,7 +183,7 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(view);
-        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
@@ -197,44 +230,25 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
                 }
             }
         });
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        alertDialogBuilder.setNegativeButton("Delete", new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
+                scheduleDBDataSource.deleteSchedule(list.get(position));
+
+                list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
+                scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
+                listViewSchedule.setAdapter(scheduleListViewAdapter);
+
+                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                serviceIntent.putExtra("cancel_alarms", true);
+                context.startService(serviceIntent);
+
                 dialogInterface.cancel();
             }
         });
 
         return alertDialogBuilder.create();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
-    {
-        this.schedulePosition = position;
-        alertDialogEditSchedule = alertDialogEditSchedule();
-        alertDialogEditSchedule.show();
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
-    {
-        this.position = position;
-        alertDialogDeleteSchedule.show();
-
-        return true;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
-    {
-        this.spinnerPosition = position;
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView)
-    {
-        this.spinnerPosition = 0;
     }
 }

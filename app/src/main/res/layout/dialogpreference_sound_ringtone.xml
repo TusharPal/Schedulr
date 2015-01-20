@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/listView_dialogpreference_display_timeout"
+        android:id="@+id/listView_dialogpreference_sound_ringtone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>

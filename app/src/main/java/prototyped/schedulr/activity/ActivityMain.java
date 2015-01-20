@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 
 import prototyped.schedulr.R;
@@ -25,6 +24,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
         fragmentManager = getSupportFragmentManager();
         mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout)findViewById(R.id.drawer_layout));
+
         if(getIntent().getExtras() != null)
         {
             mNavigationDrawerFragment.selectItem(getIntent().getExtras().getInt("fragment_number"));
@@ -69,13 +69,5 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
     public void onSectionAttached(int position)
     {
         mTitle = navigationDrawerItems[position];
-    }
-
-    public void restoreActionBar()
-    {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
     }
 }

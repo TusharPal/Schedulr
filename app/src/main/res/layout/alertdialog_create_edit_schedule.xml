@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:scrollbars="vertical"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/textView_label1_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -20,30 +20,102 @@
         <Spinner
             android:id="@+id/spinner_profilelist_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_label1_alertdialog_create_edit_schedule"/>
 
         <TextView
+            android:id="@+id/textView_label2_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:layout_below="@+id/spinner_profilelist_alertdialog_create_edit_schedule"
             android:text="Select start time"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TimePicker
             android:id="@+id/timePicker_start_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_label2_alertdialog_create_edit_schedule"/>
 
         <TextView
+            android:id="@+id/textView_label3_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:layout_below="@+id/timePicker_start_alertdialog_create_edit_schedule"
             android:text="Select end time"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TimePicker
             android:id="@+id/timePicker_end_alertdialog_create_edit_schedule"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_label3_alertdialog_create_edit_schedule"/>
+
+        <TextView
+            android:id="@+id/textView_label4_alertdialog_create_edit_schedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_below="@+id/timePicker_end_alertdialog_create_edit_schedule"
+            android:text="Select days"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_label4_alertdialog_create_edit_schedule">
+
+            <CheckBox
+                android:id="@+id/checkBox_monday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Monday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_tuesday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Tuesday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_wednesday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Wednesday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_thursday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Thursday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_friday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Friday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_saturday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Saturday"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_sunday_alertdialog_create_edit_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Sunday"/>
+            </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

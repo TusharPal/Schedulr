@@ -41,40 +41,23 @@
 
         <RingtonePreference
             android:title="Ringtone"
-            android:key="profile_ringtone"
-            android:ringtoneType="ringtone"/>
+            android:key="profile_sound_ringtone"
+            android:ringtoneType="ringtone"
+            android:selectable="true"
+            android:showDefault="true"
+            android:showSilent="false"/>
 
         <RingtonePreference
             android:title="Notification tone"
-            android:key="profile_notification_tone"
-            android:ringtoneType="notification" />
+            android:key="profile_sound_notification_tone"
+            android:selectable="true"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="false"/>
 
-        <ListPreference
+        <prototyped.schedulr.activity.DialogPreferenceSoundRingMode
             android:title="Ring mode"
-            android:key="profile_ring_mode"
-            android:entries="@array/listPreference_ring_mode_entries"
-            android:entryValues="@array/listPreference_ring_mode_values"/>
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="System" >
-
-        <CheckBoxPreference
-            android:key="profile_dial_pad_touch_tones"
-            android:title="Dial pad touch tones"
-            android:defaultValue="false" />
-        <CheckBoxPreference
-            android:key="profile_touch_sounds"
-            android:title="Touch sounds"
-            android:defaultValue="false" />
-        <CheckBoxPreference
-            android:key="profile_screen_lock_sounds"
-            android:title="Screen lock sounds"
-            android:defaultValue="false" />
-        <CheckBoxPreference
-            android:key="profile_vibrate_on_touch"
-            android:title="Vibrate on touch"
-            android:defaultValue="false" />
+            android:key="profile_sound_ring_mode" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -86,7 +69,7 @@
             android:defaultValue="false" />
 
         <CheckBoxPreference
-            android:key="profile_mobile_data_mode"
+            android:key="profile_mobile_data_state"
             android:title="Mobile data"
             android:defaultValue="false"/>
     </PreferenceCategory>

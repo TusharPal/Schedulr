@@ -4,14 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_fragment_event_create_edit_save"
+        android:id="@+id/action_save_activity_event_editor"
+        android:icon="@drawable/ic_action_save"
         android:title="Save"
         app:showAsAction="always"
         android:orderInCategory="100"/>
-
-    <item
-        android:id="@+id/action_fragment_event_create_edit_delete"
-        android:title="Delete"
-        app:showAsAction="always"
-        android:orderInCategory="101"/>
 </menu>

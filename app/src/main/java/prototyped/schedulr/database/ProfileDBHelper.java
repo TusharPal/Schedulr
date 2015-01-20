@@ -4,11 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import prototyped.schedulr.R;
+
 public class ProfileDBHelper extends SQLiteOpenHelper
 {
     public static final String DATABASE_NAME = "Profiles.db";
     public static final String TABLE_NAME = "Profiles";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 9;
 
     public static final String COLUMN_PROFILE_NAME = "profile_name";
     public static final String COLUMN_PROFILE_ICON = "profile_icon";
@@ -35,7 +37,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                         + COLUMN_SOUND_VOLUME_ALARM + " INTEGER NOT NULL,"
                                                         + COLUMN_SOUND_RINGTONE + " TEXT NOT NULL,"
                                                         + COLUMN_SOUND_NOTIFICATION_TONE + " TEXT NOT NULL,"
-                                                        + COLUMN_SOUND_RING_MODE + " TEXT NOT NULL,"
+                                                        + COLUMN_SOUND_RING_MODE + " INTEGER NOT NULL,"
                                                         + COLUMN_WIFI_STATE + " INTEGER NOT NULL,"
                                                         + COLUMN_MOBILE_DATA_STATE + " INTEGER NOT NULL);";
 
@@ -48,6 +50,48 @@ public class ProfileDBHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         sqLiteDatabase.execSQL(DATABASE_CREATE_STATEMENT);
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
+                                                            + "\"Silent\"" + ","
+                                                            + R.drawable.ic_profile_05 + ","
+                                                            + 5 + ","
+                                                            + 0 + ","
+                                                            + 30 + ","
+                                                            + 0 + ","
+                                                            + 0 + ","
+                                                            + 0 + ","
+                                                            + "\"\"" + ","
+                                                            + "\"\"" + ","
+                                                            + 0 + ","
+                                                            + 0 + ","
+                                                            + 0 + ");");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
+                                                            + "\"Home\"" + ","
+                                                            + R.drawable.ic_profile_11 + ","
+                                                            + 5 + ","
+                                                            + 0 + ","
+                                                            + 60 + ","
+                                                            + 10 + ","
+                                                            + 10 + ","
+                                                            + 10 + ","
+                                                            + "\"\"" + ","
+                                                            + "\"\"" + ","
+                                                            + 2 + ","
+                                                            + 1 + ","
+                                                            + 0 + ");");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
+                                                            + "\"Work\"" + ","
+                                                            + R.drawable.ic_profile_12 + ","
+                                                            + 5 + ","
+                                                            + 0 + ","
+                                                            + 30 + ","
+                                                            + 0 + ","
+                                                            + 0 + ","
+                                                            + 0 + ","
+                                                            + "\"\"" + ","
+                                                            + "\"\"" + ","
+                                                            + 1 + ","
+                                                            + 0 + ","
+                                                            + 1 + ");");
     }
 
     @Override

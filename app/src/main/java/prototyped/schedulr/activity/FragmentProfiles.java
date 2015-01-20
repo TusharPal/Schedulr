@@ -117,24 +117,20 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        if(!alertDialogDelete.isShowing())
-        {
-            Intent intent = new Intent(getActivity(), ActivityProfileCreateEdit.class);
-            intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
-            intent.putExtra("flag_new_profile", false);
-            startActivity(intent);
-            getActivity().finish();
-        }
+        Intent intent = new Intent(context, ActivityProfileCreateEdit.class);
+        intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
+        intent.putExtra("flag_new_profile", false);
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
         this.position = position;
-
         alertDialogDelete.show();
 
-        return false;
+        return true;
     }
 
     private AlertDialog alertDialogDelete()
@@ -148,7 +144,15 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
             {
                 dialogInterface.cancel();
 
-                deleteProfile();
+                scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
+                profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
+                list = profileDBDataSource.getProfileList();
+                adapter = new ProfileListViewAdapter(getActivity(), list);
+                listView.setAdapter(adapter);
+
+                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                serviceIntent.putExtra("cancel_alarms", true);
+                context.startService(serviceIntent);
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -161,14 +165,5 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
         });
 
         return alertDialogBuilder.create();
-    }
-
-    private void deleteProfile()
-    {
-        scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
-        profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
-        list = profileDBDataSource.getProfileList();
-        adapter = new ProfileListViewAdapter(getActivity(), list);
-        listView.setAdapter(adapter);
     }
 }
