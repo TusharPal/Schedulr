@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
@@ -22,6 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import prototyped.schedulr.R;
+import prototyped.schedulr.database.Event;
+import prototyped.schedulr.database.EventDBDataSource;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 import prototyped.schedulr.database.Schedule;
@@ -31,6 +34,7 @@ public class ServiceProfileScheduler extends Service
 {
     private ScheduleDBDataSource scheduleDBDataSource;
     private ProfileDBDataSource profileDBDataSource;
+    private EventDBDataSource eventDBDataSource;
     private AlarmManager alarmManager;
     private NotificationManager notificationManager;
     private Calendar calendar;
@@ -42,20 +46,12 @@ public class ServiceProfileScheduler extends Service
         scheduleDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(this);
         profileDBDataSource.open();
+        eventDBDataSource = new EventDBDataSource(this);
+        eventDBDataSource.open();
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if(intent.getExtras() != null && intent.getExtras().getBoolean("cancel_alarms"))
-        {
-            cancelAlarms();
-            setServiceAlarm();
-            setScheduleAlarms();
-        }
-        else
-        {
-            setServiceAlarm();
-            setScheduleAlarms();
-        }
+        cancelAlarms();
 
         return Service.START_STICKY;
     }
@@ -70,6 +66,7 @@ public class ServiceProfileScheduler extends Service
     {
         scheduleDBDataSource.close();
         profileDBDataSource.close();
+        eventDBDataSource.close();
     }
 
     private void setServiceAlarm()
@@ -92,6 +89,8 @@ public class ServiceProfileScheduler extends Service
         {
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
+
+        setScheduleAlarms();
     }
 
     private void setScheduleAlarms()
@@ -110,17 +109,18 @@ public class ServiceProfileScheduler extends Service
                 timeStampStart = (schedule.START_HOUR*60)+schedule.START_MINUTE;
                 timeStampEnd = (schedule.END_HOUR*60)+schedule.END_MINUTE;
 
-                if(timeStampStart <= timeStampCurrent && timeStampCurrent <= timeStampEnd)
+                if(timeStampStart <= timeStampCurrent && timeStampCurrent <= timeStampEnd &&  !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("event_ongoing", false))
                 {
                     Profile profile = profileDBDataSource.getProfile(schedule.PROFILE_NAME);
                     setDisplayParameters(profile);
                     setAudioParameters(profile);
                     setWifi(profile);
                     setMobileData(profile);
-                    setNotification(schedule);
+                    setNotification(schedule.PROFILE_NAME);
 
                     Intent intentEndTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
                     intentEndTime.putExtra("profile_name", "Default");
+                    intentEndTime.putExtra("is_schedule", true);
                     PendingIntent pendingIntentEndTime = PendingIntent.getBroadcast(getBaseContext(), timeStampEnd, intentEndTime, PendingIntent.FLAG_ONE_SHOT);
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.set(Calendar.HOUR_OF_DAY, schedule.END_HOUR);
@@ -141,8 +141,10 @@ public class ServiceProfileScheduler extends Service
                 {
                     Intent intentStartTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
                     intentStartTime.putExtra("profile_name", schedule.PROFILE_NAME);
+                    intentStartTime.putExtra("is_schedule", true);
                     Intent intentEndTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
-                    intentEndTime.putExtra("profile_name", schedule.PROFILE_NAME);
+                    intentEndTime.putExtra("profile_name", "Default");
+                    intentEndTime.putExtra("is_schedule", true);
                     PendingIntent pendingIntentStartTime = PendingIntent.getBroadcast(getBaseContext(), timeStampStart, intentStartTime, PendingIntent.FLAG_ONE_SHOT);
                     PendingIntent pendingIntentEndTime = PendingIntent.getBroadcast(getBaseContext(), timeStampEnd, intentEndTime, PendingIntent.FLAG_ONE_SHOT);
 
@@ -186,23 +188,147 @@ public class ServiceProfileScheduler extends Service
             }
         }
 
+        setEventAlarms();
+    }
+
+    private void setEventAlarms()
+    {
+        calendar = Calendar.getInstance();
+        int timeStampCurrent = (calendar.get(Calendar.HOUR_OF_DAY)*60)+calendar.get(Calendar.MINUTE);
+        int timeStampStart;
+        int timeStampEnd;
+        List<Event> list = eventDBDataSource.getEventList();
+
+        if(list.size() != 0)
+        {
+            for(Event event : list)
+            {
+                timeStampStart = (event.EVENT_START_HOUR*60)+event.EVENT_START_MINUTE;
+                timeStampEnd = (event.EVENT_END_HOUR*60)+event.EVENT_END_MINUTE;
+
+                if(timeStampStart <= timeStampCurrent && timeStampCurrent <= timeStampEnd && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("event_ongoing", false))
+                {
+                    Profile profile = profileDBDataSource.getProfile(event.EVENT_PROFILE_NAME);
+                    setDisplayParameters(profile);
+                    setAudioParameters(profile);
+                    setWifi(profile);
+                    setMobileData(profile);
+                    setNotification(event.EVENT_PROFILE_NAME);
+
+                    Intent intentEndTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
+                    intentEndTime.putExtra("profile_name", "Default");
+                    intentEndTime.putExtra("is_schedule", false);
+                    PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("event_ongoing", true).apply();
+                    PendingIntent pendingIntentEndTime = PendingIntent.getBroadcast(getBaseContext(), timeStampEnd*10, intentEndTime, PendingIntent.FLAG_ONE_SHOT);
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, event.EVENT_END_HOUR);
+                    calendar.set(Calendar.MINUTE, event.EVENT_END_MINUTE);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentEndTime);
+                    }
+                    else
+                    {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentEndTime);
+                    }
+                }
+                else if(timeStampCurrent < timeStampStart)
+                {
+                    Intent intentStartTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
+                    intentStartTime.putExtra("profile_name", event.EVENT_PROFILE_NAME);
+                    intentStartTime.putExtra("is_schedule", false);
+                    Intent intentEndTime = new Intent(getBaseContext(), BroadcastReceiverScheduleAlarms.class);
+                    intentEndTime.putExtra("profile_name", "Default");
+                    intentEndTime.putExtra("is_schedule", false);
+                    PendingIntent pendingIntentStartTime = PendingIntent.getBroadcast(getBaseContext(), timeStampStart*10, intentStartTime, PendingIntent.FLAG_ONE_SHOT);
+                    PendingIntent pendingIntentEndTime = PendingIntent.getBroadcast(getBaseContext(), timeStampEnd*10, intentEndTime, PendingIntent.FLAG_ONE_SHOT);
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    {
+                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.set(Calendar.HOUR_OF_DAY, event.EVENT_START_HOUR);
+                        calendar.set(Calendar.MINUTE, event.EVENT_START_MINUTE);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentStartTime);
+
+                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.set(Calendar.HOUR_OF_DAY, event.EVENT_END_HOUR);
+                        calendar.set(Calendar.MINUTE, event.EVENT_END_MINUTE);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentEndTime);
+                    }
+                    else
+                    {
+                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.set(Calendar.HOUR_OF_DAY, event.EVENT_START_HOUR);
+                        calendar.set(Calendar.MINUTE, event.EVENT_START_MINUTE);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentStartTime);
+
+                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.set(Calendar.HOUR_OF_DAY, event.EVENT_END_HOUR);
+                        calendar.set(Calendar.MINUTE, event.EVENT_END_MINUTE);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntentEndTime);
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
+
         stopSelf();
     }
 
     private void cancelAlarms()
     {
-        Intent intent = new Intent(this, BroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 001, intent, PendingIntent.FLAG_ONE_SHOT);
-        alarmManager.cancel(pendingIntent);
+        Intent intent;
+        PendingIntent pendingIntent;
+        int dayOfWeek;
+
+        calendar = Calendar.getInstance();
+        dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY? 6: calendar.get(Calendar.DAY_OF_WEEK)-2;
+
+        for(Schedule schedule : scheduleDBDataSource.getScheduleList(dayOfWeek))
+        {
+            intent = new Intent(this, BroadcastReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(this, (schedule.START_HOUR*60)+schedule.START_MINUTE, intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmManager.cancel(pendingIntent);
+
+            intent = new Intent(this, BroadcastReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(this, (schedule.END_HOUR*60)+schedule.END_MINUTE, intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        for(Event event : eventDBDataSource.getDayEventList())
+        {
+            intent = new Intent(this, BroadcastReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(this, ((event.EVENT_START_HOUR*60)+event.EVENT_START_MINUTE)*10, intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmManager.cancel(pendingIntent);
+
+            intent = new Intent(this, BroadcastReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(this, ((event.EVENT_END_HOUR*60)+event.EVENT_END_MINUTE)*10, intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmManager.cancel(pendingIntent);
+        }
+
         cancelNotification();
     }
 
-    private void setNotification(Schedule schedule)
+    private void setNotification(String profileName)
     {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                                                             .setSmallIcon(R.drawable.ic_launcher)
                                                             .setContentTitle("Schedulr")
-                                                            .setContentText(schedule.PROFILE_NAME);
+                                                            .setContentText(profileName);
         Notification notification = notificationBuilder.build();
         notification.flags = Notification.FLAG_NO_CLEAR;
         notificationManager.notify(001, notification);
@@ -211,6 +337,8 @@ public class ServiceProfileScheduler extends Service
     private void cancelNotification()
     {
         notificationManager.cancelAll();
+
+        setServiceAlarm();
     }
 
     private void setDisplayParameters(Profile profile)

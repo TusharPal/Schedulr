@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -31,11 +30,12 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
     private EventDBDataSource eventDBDataSource;
     private ProfileDBDataSource profileDBDataSource;
     private Event event;
+    private Calendar calendar;
     private EditText editTextTitle;
     private EditText editTextNote;
-    private Button buttonStartTime;
-    private Button buttonEndTime;
-    private Button buttonDate;
+    private EditText editTextStartTime;
+    private EditText editTextEndTime;
+    private EditText editTextDate;
     private Spinner spinnerProfiles;
     private TimePicker timePicker;
     private DatePicker datePicker;
@@ -52,17 +52,18 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
         eventDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(this);
         profileDBDataSource.open();
+        calendar = Calendar.getInstance();
 
         editTextTitle = (EditText)findViewById(R.id.editText_title_activity_event_editor);
         editTextNote = (EditText)findViewById(R.id.editText_note_activity_event_editor);
-        buttonStartTime = (Button)findViewById(R.id.button_start_time_activity_event_editor);
-        buttonEndTime = (Button)findViewById(R.id.button_end_time_activity_event_editor);
-        buttonDate = (Button)findViewById(R.id.button_date_activity_event_editor);
+        editTextStartTime = (EditText)findViewById(R.id.editText_start_time_activity_event_editor);
+        editTextEndTime = (EditText)findViewById(R.id.editText_end_time_activity_event_editor);
+        editTextDate = (EditText)findViewById(R.id.editText_date_activity_event_editor);
         spinnerProfiles = (Spinner)findViewById(R.id.spinner_profiles_activity_event_editor);
         spinnerProfiles.setAdapter(new ProfileListViewAdapter(this, profileDBDataSource.getProfileList()));
-        buttonStartTime.setOnClickListener(this);
-        buttonEndTime.setOnClickListener(this);
-        buttonDate.setOnClickListener(this);
+        editTextStartTime.setOnClickListener(this);
+        editTextEndTime.setOnClickListener(this);
+        editTextDate.setOnClickListener(this);
         spinnerProfiles.setOnItemSelectedListener(this);
 
         if(!getIntent().getExtras().getBoolean("new_event"))
@@ -70,9 +71,9 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
             event = eventDBDataSource.getEvent(getIntent().getExtras().getLong("event_id"));
             editTextTitle.setText(event.EVENT_TITLE);
             editTextNote.setText(event.EVENT_NOTE);
-            buttonStartTime.setText(getTimeStamp(event.EVENT_START_HOUR, event.EVENT_START_MINUTE));
-            buttonEndTime.setText(getTimeStamp(event.EVENT_END_HOUR, event.EVENT_END_MINUTE));
-            buttonDate.setText(getDateStamp(event.EVENT_DAY_OF_MONTH, event.EVENT_MONTH, event.EVENT_YEAR));
+            editTextStartTime.setHint(getTimeStamp(event.EVENT_START_HOUR, event.EVENT_START_MINUTE));
+            editTextEndTime.setHint(getTimeStamp(event.EVENT_END_HOUR, event.EVENT_END_MINUTE));
+            editTextDate.setHint(getDateStamp(event.EVENT_DAY_OF_MONTH, event.EVENT_MONTH, event.EVENT_YEAR));
             isSet[0] = true;
             isSet[1] = true;
             isSet[2] = true;
@@ -80,9 +81,10 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
         else
         {
             event = new Event();
-            buttonStartTime.setText(getTimeStamp(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE)));
-            buttonEndTime.setText(getTimeStamp(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE)));
-            buttonDate.setText(getDateStamp(Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.MONTH)+1, Calendar.getInstance().get(Calendar.YEAR)));
+            editTextStartTime.setHint(getTimeStamp(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
+            calendar.add(calendar.HOUR_OF_DAY, 1);
+            editTextEndTime.setHint(getTimeStamp(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
+            editTextDate.setHint(getDateStamp(Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.MONTH)+1, Calendar.getInstance().get(Calendar.YEAR)));
         }
     }
 
@@ -146,6 +148,11 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                             if(getIntent().getExtras().getBoolean("new_event"))
                             {
                                 eventDBDataSource.createEvent(event);
+
+                                Intent intentService = new Intent(this, ServiceProfileScheduler.class);
+                                intentService.putExtra("cancel_alarms", true);
+                                startService(intentService);
+
                                 Intent intent = new Intent(this, ActivityMain.class);
                                 intent.putExtra("fragment_number", 1);
                                 startActivity(intent);
@@ -154,6 +161,11 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                             else
                             {
                                 eventDBDataSource.editEvent(event);
+
+                                Intent intentService = new Intent(this, ServiceProfileScheduler.class);
+                                intentService.putExtra("cancel_alarms", true);
+                                startService(intentService);
+
                                 Intent intent = new Intent(this, ActivityMain.class);
                                 intent.putExtra("fragment_number", 1);
                                 startActivity(intent);
@@ -171,10 +183,17 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                         case 2:
                         {
                             Toast.makeText(this, "Event is clashing with an existing event.", Toast.LENGTH_SHORT).show();
+
+                            break;
                         }
+                        case 3:
+                        {
+                            Toast.makeText(getApplicationContext(), "Event start time has already elapsed.", Toast.LENGTH_SHORT).show();
+
                             break;
                         }
                     }
+                }
 
                 return true;
             }
@@ -201,19 +220,19 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
     {
         switch(view.getId())
         {
-            case R.id.button_start_time_activity_event_editor:
+            case R.id.editText_start_time_activity_event_editor:
             {
                 alertDialogStartTime().show();
 
                 break;
             }
-            case R.id.button_end_time_activity_event_editor:
+            case R.id.editText_end_time_activity_event_editor:
             {
                 alertDialogEndTime().show();
 
                 break;
             }
-            case R.id.button_date_activity_event_editor:
+            case R.id.editText_date_activity_event_editor:
             {
                 alertDialogDate().show();
 
@@ -377,7 +396,7 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
             {
                 event.EVENT_START_HOUR = timePicker.getCurrentHour();
                 event.EVENT_START_MINUTE = timePicker.getCurrentMinute();
-                buttonStartTime.setText(getTimeStamp(event.EVENT_START_HOUR, event.EVENT_START_MINUTE));
+                editTextStartTime.setHint(getTimeStamp(event.EVENT_START_HOUR, event.EVENT_START_MINUTE));
                 isSet[0] = true;
 
                 dialogInterface.cancel();
@@ -408,7 +427,7 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
             {
                 event.EVENT_END_HOUR = timePicker.getCurrentHour();
                 event.EVENT_END_MINUTE = timePicker.getCurrentMinute();
-                buttonEndTime.setText(getTimeStamp(event.EVENT_END_HOUR, event.EVENT_END_MINUTE));
+                editTextEndTime.setHint(getTimeStamp(event.EVENT_END_HOUR, event.EVENT_END_MINUTE));
                 isSet[1] = true;
 
                 dialogInterface.cancel();
@@ -438,7 +457,7 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                 event.EVENT_DAY_OF_MONTH = datePicker.getDayOfMonth();
                 event.EVENT_MONTH = datePicker.getMonth() + 1;
                 event.EVENT_YEAR = datePicker.getYear();
-                buttonDate.setText(getDateStamp(event.EVENT_DAY_OF_MONTH, event.EVENT_MONTH+1, event.EVENT_YEAR));
+                editTextDate.setHint(getDateStamp(event.EVENT_DAY_OF_MONTH, event.EVENT_MONTH+1, event.EVENT_YEAR));
                 isSet[2] = true;
 
                 dialogInterface.cancel();
@@ -474,7 +493,12 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                         {
                             event.EVENT_TITLE = editTextTitle.getText().toString();
                             event.EVENT_NOTE = editTextNote.getText().toString();
+                            event.EVENT_PROFILE_NAME = profileDBDataSource.getProfileList().get(spinnerProfilePosition).PROFILE_NAME;
                             eventDBDataSource.createEvent(event);
+
+                            Intent intentService = new Intent(getApplicationContext(), ServiceProfileScheduler.class);
+                            intentService.putExtra("cancel_alarms", true);
+                            startService(intentService);
 
                             Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                             intent.putExtra("fragment_number", 1);
@@ -485,7 +509,12 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                         {
                             event.EVENT_TITLE = editTextTitle.getText().toString();
                             event.EVENT_NOTE = editTextNote.getText().toString();
+                            event.EVENT_PROFILE_NAME = profileDBDataSource.getProfileList().get(spinnerProfilePosition).PROFILE_NAME;
                             eventDBDataSource.editEvent(event);
+
+                            Intent intentService = new Intent(getApplicationContext(), ServiceProfileScheduler.class);
+                            intentService.putExtra("cancel_alarms", true);
+                            startService(intentService);
 
                             Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                             intent.putExtra("fragment_number", 1);
@@ -510,6 +539,17 @@ public class ActivityEventEditor extends ActionBarActivity implements AdapterVie
                     {
                         dialogInterface.cancel();
                         Toast.makeText(getApplicationContext(), "This event is clashing with an existing event.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+                        intent.putExtra("fragment_number", 1);
+                        startActivity(intent);
+                        finish();
+
+                        break;
+                    }
+                    case 3:
+                    {
+                        dialogInterface.cancel();
+                        Toast.makeText(getApplicationContext(), "Event start time has already elapsed.", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                         intent.putExtra("fragment_number", 1);
                         startActivity(intent);

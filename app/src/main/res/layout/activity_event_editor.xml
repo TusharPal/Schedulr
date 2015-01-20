@@ -55,18 +55,20 @@
                     android:paddingLeft="4dp"
                     android:gravity="left|center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Start time"/>
+                    android:text="Set start time"/>
 
                 <TextView
                     android:layout_weight="1"/>
 
-                <Button
-                    android:id="@+id/button_start_time_activity_event_editor"
+                <EditText
+                    android:id="@+id/editText_start_time_activity_event_editor"
                     android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:gravity="center"
-                    android:background="@android:color/holo_blue_dark"
-                    android:text="Time"/>
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Time"/>
             </TableRow>
 
             <TableRow
@@ -80,17 +82,20 @@
                     android:paddingLeft="4dp"
                     android:gravity="left|center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="End time"/>
+                    android:text="Set end time"/>
 
                 <TextView
                     android:layout_weight="1"/>
 
-                <Button
-                    android:id="@+id/button_end_time_activity_event_editor"
+                <EditText
+                    android:id="@+id/editText_end_time_activity_event_editor"
                     android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:background="@android:color/holo_blue_dark"
-                    android:text="Time"/>
+                    android:gravity="center"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Time"/>
             </TableRow>
 
             <TableRow
@@ -104,18 +109,20 @@
                     android:paddingLeft="4dp"
                     android:gravity="left|center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Event date"/>
+                    android:text="Set date"/>
 
                 <TextView
                     android:layout_weight="1"/>
 
-                <Button
-                    android:id="@+id/button_date_activity_event_editor"
-                    android:layout_width="match_parent"
+                <EditText
+                    android:id="@+id/editText_date_activity_event_editor"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:background="@android:color/holo_blue_dark"
-                    android:text="Date"/>
+                    android:gravity="center"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Date"/>
             </TableRow>
         </TableLayout>
     </RelativeLayout>

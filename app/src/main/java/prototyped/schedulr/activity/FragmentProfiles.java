@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -144,15 +146,23 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
             {
                 dialogInterface.cancel();
 
-                scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
-                profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
-                list = profileDBDataSource.getProfileList();
-                adapter = new ProfileListViewAdapter(getActivity(), list);
-                listView.setAdapter(adapter);
+                if(list.get(position).PROFILE_NAME.trim().equals("Default"))
+                {
+                    Log.d("profile name", list.get(position).PROFILE_NAME);
+                    Toast.makeText(context, "Cannot delete default profile", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
+                    profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
+                    list = profileDBDataSource.getProfileList();
+                    adapter = new ProfileListViewAdapter(getActivity(), list);
+                    listView.setAdapter(adapter);
 
-                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                serviceIntent.putExtra("cancel_alarms", true);
-                context.startService(serviceIntent);
+                    Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
+                    serviceIntent.putExtra("cancel_alarms", true);
+                    context.startService(serviceIntent);
+                }
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()

@@ -10,7 +10,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
 {
     public static final String DATABASE_NAME = "Profiles.db";
     public static final String TABLE_NAME = "Profiles";
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 11;
 
     public static final String COLUMN_PROFILE_NAME = "profile_name";
     public static final String COLUMN_PROFILE_ICON = "profile_icon";
@@ -51,10 +51,24 @@ public class ProfileDBHelper extends SQLiteOpenHelper
     {
         sqLiteDatabase.execSQL(DATABASE_CREATE_STATEMENT);
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
+                                                            + "\"Default\"" + ","
+                                                            + R.drawable.ic_profile_19 + ","
+                                                            + 5 + ","
+                                                            + 1 + ","
+                                                            + 30 + ","
+                                                            + 5 + ","
+                                                            + 5 + ","
+                                                            + 5 + ","
+                                                            + "\"\"" + ","
+                                                            + "\"\"" + ","
+                                                            + 2 + ","
+                                                            + 0 + ","
+                                                            + 1 + ");");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
                                                             + "\"Silent\"" + ","
                                                             + R.drawable.ic_profile_05 + ","
                                                             + 5 + ","
-                                                            + 0 + ","
+                                                            + 1 + ","
                                                             + 30 + ","
                                                             + 0 + ","
                                                             + 0 + ","
@@ -68,7 +82,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                             + "\"Home\"" + ","
                                                             + R.drawable.ic_profile_11 + ","
                                                             + 5 + ","
-                                                            + 0 + ","
+                                                            + 1 + ","
                                                             + 60 + ","
                                                             + 10 + ","
                                                             + 10 + ","
@@ -82,7 +96,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                             + "\"Work\"" + ","
                                                             + R.drawable.ic_profile_12 + ","
                                                             + 5 + ","
-                                                            + 0 + ","
+                                                            + 1 + ","
                                                             + 30 + ","
                                                             + 0 + ","
                                                             + 0 + ","

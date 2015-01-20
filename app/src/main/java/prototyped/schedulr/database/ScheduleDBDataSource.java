@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ScheduleDBDataSource
@@ -83,15 +84,48 @@ public class ScheduleDBDataSource
         List<Schedule> list = new ArrayList<Schedule>();
         Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, ScheduleDBHelper.COLUMN_PROFILE_NAME + " = " + "\"" + profileName + "\"", null, null, null, null);
 
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast())
+        if(cursor.moveToFirst())
         {
-            list.add(cursorToSchedule(cursor));
-            cursor.moveToNext();
+            while(!cursor.isAfterLast())
+            {
+                list.add(cursorToSchedule(cursor));
+                cursor.moveToNext();
+            }
         }
         cursor.close();
 
         return list;
+    }
+
+    public String getCurrentProfileName()
+    {
+        int timeStampCurrent = (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)*60)+Calendar.getInstance().get(Calendar.MINUTE);
+        int timeStampStart;
+        int timeStampEnd;
+
+        Cursor cursor = database.query(ScheduleDBHelper.TABLE_NAME, allColumns, null, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            while(!cursor.isAfterLast())
+            {
+                Schedule schedule = cursorToSchedule(cursor);
+                timeStampStart = (schedule.START_HOUR*60)+schedule.START_MINUTE;
+                timeStampEnd = (schedule.END_HOUR*60)+schedule.END_MINUTE;
+
+                if(timeStampStart <= timeStampCurrent && timeStampCurrent <= timeStampEnd)
+                {
+                    return schedule.PROFILE_NAME;
+                }
+                else
+                {
+                    cursor.moveToNext();
+                }
+            }
+        }
+        cursor.close();
+
+        return "Default";
     }
 
     private Schedule cursorToSchedule(Cursor cursor)

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
@@ -17,13 +18,16 @@ import java.lang.reflect.Method;
 import prototyped.schedulr.R;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
+import prototyped.schedulr.database.ScheduleDBDataSource;
 
 public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
 {
     private Context context;
     private ProfileDBDataSource profileDBDataSource;
+    private ScheduleDBDataSource scheduleDBDataSource;
     private Profile profile;
     private Intent intent;
+
     @Override
     public void onReceive(Context context, Intent intent)
     {
@@ -31,17 +35,55 @@ public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
         this.intent = intent;
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
+        scheduleDBDataSource = new ScheduleDBDataSource(context);
+        scheduleDBDataSource.open();
         profile = profileDBDataSource.getProfile(intent.getExtras().getString("profile_name"));
 
-        setDisplayParameters();
-        setAudioParameters();
-        setWifi();
-        setMobileData();
-        setNotification();
+        if(intent.getExtras().getBoolean("is_schedule"))
+        {
+            if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false))
+            {
+                setDisplayParameters();
+                setAudioParameters();
+                setWifi();
+                setMobileData();
+                setNotification();
+            }
+        }
+        else
+        {
+            if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false))
+            {
+                if(intent.getExtras().getString("profile_name").equals("Default"))
+                {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", false).apply();
+
+                    context.startService(new Intent(context, ServiceProfileScheduler.class));
+                }
+                else
+                {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", true).apply();
+                }
+
+                setDisplayParameters();
+                setAudioParameters();
+                setWifi();
+                setMobileData();
+                setNotification();
+            }
+            else
+            {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", true).apply();
+
+                setDisplayParameters();
+                setAudioParameters();
+                setWifi();
+                setMobileData();
+                setNotification();
+            }
+        }
 
         profileDBDataSource.close();
-
-
     }
 
     private void setNotification()

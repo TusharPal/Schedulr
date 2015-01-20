@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EventDBDataSource
@@ -120,6 +121,21 @@ public class EventDBDataSource
         return list;
     }
 
+    public List<Event> getDayEventList()
+    {
+        List<Event> list = new ArrayList<Event>();
+        Cursor cursor = database.query(EventDBHelper.TABLE_NAME, allColumns, EventDBHelper.COLUMN_DAY_OF_MONTH + " = " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + " AND " + EventDBHelper.COLUMN_MONTH + " = " + Calendar.getInstance().get(Calendar.MONTH) + " AND " + EventDBHelper.COLUMN_YEAR + " = " + Calendar.getInstance().get(Calendar.YEAR), null, null, null, EventDBHelper.COLUMN_YEAR + " ASC," +  EventDBHelper.COLUMN_MONTH + " ASC," + EventDBHelper.COLUMN_DAY_OF_MONTH + " ASC," + EventDBHelper.COLUMN_START_HOUR + " ASC," + EventDBHelper.COLUMN_START_MINUTE + " ASC");
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast())
+        {
+            list.add(cursorToEvent(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
+    }
+
     public Event cursorToEvent(Cursor cursor)
     {
         Event event = new Event();
@@ -144,17 +160,23 @@ public class EventDBDataSource
 
     public int checkIfEventValid(Event event)
     {
+        int currentTime;
         int currentStart;
         int currentEnd;
         int tempStart;
         int tempEnd;
 
-        currentStart = (event.EVENT_START_HOUR*100) + event.EVENT_START_MINUTE;
-        currentEnd = (event.EVENT_END_HOUR*100) + event.EVENT_END_MINUTE;
+        currentTime = (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)*60) + Calendar.getInstance().get(Calendar.MINUTE);
+        currentStart = (event.EVENT_START_HOUR*60) + event.EVENT_START_MINUTE;
+        currentEnd = (event.EVENT_END_HOUR*60) + event.EVENT_END_MINUTE;
 
-        if(currentStart > currentEnd || currentStart == currentEnd)
+        if((currentStart > currentEnd) || (currentStart == currentEnd))
         {
             return 1;
+        }
+        else if(currentStart <= currentTime)
+        {
+            return 3;
         }
         else
         {
@@ -164,8 +186,8 @@ public class EventDBDataSource
                 while(!cursor.isAfterLast())
                 {
                     Event temp = cursorToEvent(cursor);
-                    tempStart = (temp.EVENT_START_HOUR*100) + temp.EVENT_START_MINUTE;
-                    tempEnd = (temp.EVENT_END_HOUR*100) + temp.EVENT_END_MINUTE;
+                    tempStart = (temp.EVENT_START_HOUR*60) + temp.EVENT_START_MINUTE;
+                    tempEnd = (temp.EVENT_END_HOUR*60) + temp.EVENT_END_MINUTE;
 
                     if(event.EVENT_ID == temp.EVENT_ID)
                     {
