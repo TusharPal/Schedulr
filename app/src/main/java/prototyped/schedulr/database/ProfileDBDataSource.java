@@ -107,17 +107,46 @@ public class ProfileDBDataSource
     public List<Profile> getProfileList()
     {
         List<Profile> list=new ArrayList<Profile>();
-
         Cursor cursor = database.query(ProfileDBHelper.TABLE_NAME, allColumns, null, null, null, null, null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast())
+
+        if(cursor.moveToFirst())
         {
-            list.add(cursorToProfile(cursor));
-            cursor.moveToNext();
+            while(!cursor.isAfterLast())
+            {
+                list.add(cursorToProfile(cursor));
+                cursor.moveToNext();
+            }
+            cursor.close();
         }
-        cursor.close();
 
         return list;
+    }
+
+    public int getProfilePosition(String profileName)
+    {
+        List<Profile> list=new ArrayList<Profile>();
+        int position = 0;
+
+        Cursor cursor = database.query(ProfileDBHelper.TABLE_NAME, allColumns, null, null, null, null, null);
+        if(cursor.moveToFirst())
+        {
+            while(!cursor.isAfterLast())
+            {
+                list.add(cursorToProfile(cursor));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        for(position = 0; position< list.size(); position++)
+        {
+            if(list.get(position).PROFILE_NAME.equals(profileName))
+            {
+                break;
+            }
+        }
+
+        return position;
     }
 
     private Profile cursorToProfile(Cursor cursor)

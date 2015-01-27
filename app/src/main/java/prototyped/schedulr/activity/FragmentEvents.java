@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import prototyped.schedulr.R;
 import prototyped.schedulr.adapter.EventListViewAdapter;
@@ -23,12 +22,12 @@ import prototyped.schedulr.database.ProfileDBDataSource;
 
 public class FragmentEvents extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
-    private static final String NAVIGATION_DRAWER_POSITION = "POSITION";
+    private static final String NAVIGATION_DRAWER_POSITION = "position";
     private EventDBDataSource eventDBDataSource;
     private ProfileDBDataSource profileDBDataSource;
-    private ListView listView;
-    private EventListViewAdapter eventListViewAdapter;
     private int longClickPosition;
+
+    private ListView listView;
 
     public static final FragmentEvents newInstance(int position)
     {
@@ -50,10 +49,10 @@ public class FragmentEvents extends Fragment implements AdapterView.OnItemClickL
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
         listView = (ListView)rootView.findViewById(R.id.listView_fragment_event);
-        eventListViewAdapter = new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList());
-        listView.setAdapter(eventListViewAdapter);
+        listView.setAdapter(new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList()));
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
+
         return rootView;
     }
 
@@ -62,9 +61,8 @@ public class FragmentEvents extends Fragment implements AdapterView.OnItemClickL
         super.onResume();
 
         eventDBDataSource.open();
-        eventListViewAdapter = new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList());
-        listView.setAdapter(eventListViewAdapter);
         profileDBDataSource.open();
+        listView.setAdapter(new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList()));
     }
 
     public void onPause()
@@ -95,17 +93,10 @@ public class FragmentEvents extends Fragment implements AdapterView.OnItemClickL
         {
             case R.id.action_add_event_fragment_events:
             {
-                if(profileDBDataSource.getProfileList().size() > 0)
-                {
-                    Intent intent = new Intent(getActivity(), ActivityEventEditor.class);
-                    intent.putExtra("new_event", true);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
-                else
-                {
-                    Toast.makeText(getActivity(), "Please create a profile first", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(getActivity(), ActivityEventEditor.class);
+                intent.putExtra("new_event", true);
+                startActivity(intent);
+                getActivity().finish();
 
                 return true;
             }
@@ -118,7 +109,8 @@ public class FragmentEvents extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
         Intent intent = new Intent(getActivity(), ActivityEventEditor.class);
-        intent.putExtra("event_id", eventDBDataSource.getEventList().get(position).EVENT_ID);
+        intent.putExtra("new_event", false);
+        intent.putExtra("event_id", eventDBDataSource.getEventList().get(position).ID);
         startActivity(intent);
         getActivity().finish();
     }
@@ -141,15 +133,13 @@ public class FragmentEvents extends Fragment implements AdapterView.OnItemClickL
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                dialogInterface.cancel();
-
-                eventDBDataSource.deleteEvent(eventDBDataSource.getEventList().get(longClickPosition).EVENT_ID);
-                eventListViewAdapter = new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList());
-                listView.setAdapter(eventListViewAdapter);
+                eventDBDataSource.deleteEvent(eventDBDataSource.getEventList().get(longClickPosition));
+                listView.setAdapter(new EventListViewAdapter(getActivity(), eventDBDataSource.getEventList()));
 
                 Intent serviceIntent = new Intent(getActivity(), ServiceProfileScheduler.class);
-                serviceIntent.putExtra("cancel_alarms", true);
                 getActivity().startService(serviceIntent);
+
+                dialogInterface.cancel();
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()

@@ -14,26 +14,19 @@ import prototyped.schedulr.R;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 
-public class ActivityProfileCreateEdit extends PreferenceActivity
+public class ActivityProfileEditor extends PreferenceActivity
 {
-    private ProfileDBDataSource dataSource;
+    private ProfileDBDataSource profileDBDataSource;
     private SharedPreferences sharedPreferences;
-    private AlertDialog alertDialogSave;
-    private String searchProfileName;
-    private boolean flagNewProfile;
 
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
-        dataSource = new ProfileDBDataSource(this);
-        dataSource.open();
+        profileDBDataSource = new ProfileDBDataSource(this);
+        profileDBDataSource.open();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         getFragmentManager().beginTransaction().replace(android.R.id.content, ProfilePreferenceFragment.newInstance()).commit();
-
-        alertDialogSave = alertDialogSave();
-        searchProfileName = getIntent().getExtras().getString("search_profile_name");
-        flagNewProfile = getIntent().getExtras().getBoolean("flag_new_profile");
 
         setPreferences();
     }
@@ -42,7 +35,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
     {
         super.onResume();
 
-        dataSource.open();
+        profileDBDataSource.open();
         setPreferences();
     }
 
@@ -50,24 +43,19 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
     {
         super.onPause();
 
-        dataSource.close();
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent)
-    {
-        super.onActivityResult(requestCode, resultCode, intent);
+        profileDBDataSource.close();
     }
 
     public void onBackPressed()
     {
-        alertDialogSave.show();
+        alertDialogSave().show();
     }
 
     private void setPreferences()
     {
         Profile profile;
 
-        if(flagNewProfile)
+        if(getIntent().getExtras().getBoolean("new_profile"))
         {
             profile = new Profile();
 
@@ -87,7 +75,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
         }
         else
         {
-            profile = dataSource.getProfile(searchProfileName);
+            profile = profileDBDataSource.getProfile(getIntent().getExtras().getString("search_profile_name"));
 
             sharedPreferences.edit().putString("profile_name", profile.PROFILE_NAME).apply();
             sharedPreferences.edit().putInt("profile_icon", profile.PROFILE_ICON).apply();
@@ -109,7 +97,7 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
     {
         Profile profile = new Profile();
 
-        if(flagNewProfile)
+        if(getIntent().getExtras().getBoolean("new_profile"))
         {
             profile.PROFILE_NAME = sharedPreferences.contains("profile_name")?sharedPreferences.getString("profile_name", ""):"New Profile";
             profile.PROFILE_ICON = sharedPreferences.contains("profile_icon")?sharedPreferences.getInt("profile_icon", 0):0;
@@ -119,13 +107,13 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
             profile.SOUND_VOLUME_RINGTONE = sharedPreferences.contains("profile_sound_volume_ringtone")?sharedPreferences.getInt("profile_sound_volume_ringtone", 0):5;
             profile.SOUND_VOLUME_APPLICATION = sharedPreferences.contains("profile_sound_volume_application")?sharedPreferences.getInt("profile_sound_volume_application", 0):5;
             profile.SOUND_VOLUME_ALARM = sharedPreferences.contains("profile_sound_volume_alarm")?sharedPreferences.getInt("profile_sound_volume_alarm", 0):5;
-            profile.SOUND_RINGTONE = sharedPreferences.contains("profile_sound_ringtone")?sharedPreferences.getString("profile_sound_ringtone", ""):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString();
-            profile.SOUND_NOTIFICATION_TONE = sharedPreferences.contains("profile_sound_notification_tone")?sharedPreferences.getString("profile_sound_notification_tone", ""):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+            profile.SOUND_RINGTONE = sharedPreferences.contains("profile_sound_ringtone")?sharedPreferences.getString("profile_sound_ringtone", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString()):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString();
+            profile.SOUND_NOTIFICATION_TONE = sharedPreferences.contains("profile_sound_notification_tone")?sharedPreferences.getString("profile_sound_notification_tone", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
             profile.SOUND_RING_MODE = sharedPreferences.contains("profile_sound_ring_mode")?sharedPreferences.getInt("profile_sound_ring_mode", 2):2;
             profile.WIFI_STATE = sharedPreferences.contains("profile_wifi_state")?sharedPreferences.getBoolean("profile_wifi_state", false):false;
             profile.MOBILE_DATA_STATE = sharedPreferences.contains("profile_mobile_data_state")?sharedPreferences.getBoolean("profile_mobile_data_state", false):false;
 
-            dataSource.createProfile(profile);
+            profileDBDataSource.createProfile(profile);
         }
         else
         {
@@ -137,13 +125,13 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
             profile.SOUND_VOLUME_RINGTONE = sharedPreferences.contains("profile_sound_volume_ringtone")?sharedPreferences.getInt("profile_sound_volume_ringtone", 0):5;
             profile.SOUND_VOLUME_APPLICATION = sharedPreferences.contains("profile_sound_volume_application")?sharedPreferences.getInt("profile_sound_volume_application", 0):5;
             profile.SOUND_VOLUME_ALARM = sharedPreferences.contains("profile_sound_volume_alarm")?sharedPreferences.getInt("profile_sound_volume_alarm", 0):5;
-            profile.SOUND_RINGTONE = sharedPreferences.contains("profile_sound_ringtone")?sharedPreferences.getString("profile_sound_ringtone", ""):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString();
-            profile.SOUND_NOTIFICATION_TONE = sharedPreferences.contains("profile_sound_notification_tone")?sharedPreferences.getString("profile_sound_notification_tone", ""):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+            profile.SOUND_RINGTONE = sharedPreferences.contains("profile_sound_ringtone")?sharedPreferences.getString("profile_sound_ringtone", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString()):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString();
+            profile.SOUND_NOTIFICATION_TONE = sharedPreferences.contains("profile_sound_notification_tone")?sharedPreferences.getString("profile_sound_notification_tone", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()):RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
             profile.SOUND_RING_MODE = sharedPreferences.contains("profile_sound_ring_mode")?sharedPreferences.getInt("profile_sound_ring_mode", 2):2;
             profile.WIFI_STATE = sharedPreferences.contains("profile_wifi_state")?sharedPreferences.getBoolean("profile_wifi_state", false):false;
             profile.MOBILE_DATA_STATE = sharedPreferences.contains("profile_mobile_data_state")?sharedPreferences.getBoolean("profile_mobile_data_state", false):false;
 
-            dataSource.editProfile(searchProfileName, profile);
+            profileDBDataSource.editProfile(getIntent().getExtras().getString("search_profile_name"), profile);
         }
     }
 
@@ -160,8 +148,11 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
                 dialog.cancel();
 
                 saveProfile();
-                startService(new Intent(getApplicationContext(), ServiceProfileScheduler.class));
-                Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+
+                Intent intent = new Intent(getApplicationContext(), ServiceProfileScheduler.class);
+                startService(intent);
+
+                intent = new Intent(getApplicationContext(), ActivityMain.class);
                 intent.putExtra("fragment_number", 2);
                 startActivity(intent);
 
@@ -188,7 +179,6 @@ public class ActivityProfileCreateEdit extends PreferenceActivity
 
     public static class ProfilePreferenceFragment extends PreferenceFragment
     {
-
         public static final ProfilePreferenceFragment newInstance()
         {
             ProfilePreferenceFragment profilePreferenceFragment = new ProfilePreferenceFragment();

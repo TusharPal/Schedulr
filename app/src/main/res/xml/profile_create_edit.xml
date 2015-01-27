@@ -39,6 +39,16 @@
         <prototyped.schedulr.activity.DialogPreferenceSoundVolume
             android:title="Volume"/>
 
+        <RingtonePreference
+            android:key="profile_sound_ringtone"
+            android:title="Select ringtone"
+            android:ringtoneType="ringtone" />
+
+        <RingtonePreference
+            android:key="profile_sound_notification_tone"
+            android:title="Select notification tone"
+            android:ringtoneType="notification" />
+
         <prototyped.schedulr.activity.DialogPreferenceSoundRingMode
             android:title="Ring mode"
             android:key="profile_sound_ring_mode" />

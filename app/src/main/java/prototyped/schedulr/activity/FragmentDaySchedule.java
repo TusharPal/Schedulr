@@ -6,46 +6,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.List;
 
 import prototyped.schedulr.R;
-import prototyped.schedulr.adapter.ProfileListViewAdapter;
 import prototyped.schedulr.adapter.ScheduleListViewAdapter;
 import prototyped.schedulr.database.ProfileDBDataSource;
 import prototyped.schedulr.database.Schedule;
 import prototyped.schedulr.database.ScheduleDBDataSource;
 
-public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener
+public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
     private static final String DAY_OF_WEEK = "dayOfWeek";
     private static Context context;
     private ScheduleDBDataSource scheduleDBDataSource;
     private ProfileDBDataSource profileDBDataSource;
-    private ListView listViewSchedule;
-    private ScheduleListViewAdapter scheduleListViewAdapter;
-    private AlertDialog alertDialogDeleteSchedule;
-    private AlertDialog alertDialogEditDeleteSchedule;
     private List<Schedule> list;
-    private int position;
-    private Spinner spinner;
-    private TimePicker startTimePicker;
-    private TimePicker endTimePicker;
-    private CheckBox checkBoxDay[] = new CheckBox[7];
-    private int spinnerPosition = 0;
-    private int schedulePosition = 0;
-    private Schedule oldSchedule;
-    private Schedule newSchedule;
+    private int longClickPosition;
+    private ListView listViewSchedule;
 
     public static final FragmentDaySchedule newInstance(Context c, int position)
     {
@@ -65,13 +48,13 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         scheduleDBDataSource.open();
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
-        View rootView = inflater.inflate(R.layout.fragment_day, container, false);
-
         list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
+
+        View rootView = inflater.inflate(R.layout.fragment_day, container, false);
         listViewSchedule = (ListView) rootView.findViewById(R.id.listView_fragment_day);
-        scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-        listViewSchedule.setAdapter(scheduleListViewAdapter);
+        listViewSchedule.setAdapter(new ScheduleListViewAdapter(context, list));
         listViewSchedule.setOnItemClickListener(this);
+        listViewSchedule.setOnItemLongClickListener(this);
 
         return rootView;
     }
@@ -90,8 +73,7 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
         profileDBDataSource.open();
 
         list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-        scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-        listViewSchedule.setAdapter(scheduleListViewAdapter);
+        listViewSchedule.setAdapter(new ScheduleListViewAdapter(context, list));
 
         super.onResume();
     }
@@ -99,21 +81,21 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        this.schedulePosition = position;
-        alertDialogEditDeleteSchedule = alertDialogEditDeleteSchedule();
-        alertDialogEditDeleteSchedule.show();
+        Intent intent = new Intent(context, ActivityScheduleEditor.class);
+        intent.putExtra("new_schedule", false);
+        intent.putExtra("current_day", DAY_OF_WEEK);
+        intent.putExtra("schedule_id", list.get(position).ID);
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        this.spinnerPosition = position;
-    }
+        this.longClickPosition = position;
+        alertDialogDeleteSchedule().show();
 
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView)
-    {
-        this.spinnerPosition = 0;
+        return true;
     }
 
     private AlertDialog alertDialogDeleteSchedule()
@@ -125,14 +107,12 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                scheduleDBDataSource.deleteSchedule(list.get(position));
+                scheduleDBDataSource.deleteSchedule(list.get(longClickPosition));
 
                 list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-                scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-                listViewSchedule.setAdapter(scheduleListViewAdapter);
+                listViewSchedule.setAdapter(new ScheduleListViewAdapter(context, list));
 
                 Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                serviceIntent.putExtra("cancel_alarms", true);
                 context.startService(serviceIntent);
             }
         });
@@ -141,110 +121,6 @@ public class FragmentDaySchedule extends Fragment implements AdapterView.OnItemC
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                dialogInterface.cancel();
-            }
-        });
-
-        return alertDialogBuilder.create();
-    }
-
-    private AlertDialog alertDialogEditDeleteSchedule()
-    {
-        oldSchedule = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK)).get(schedulePosition);
-        newSchedule = new Schedule();
-
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.alertdialog_create_edit_schedule, null);
-        spinner = (Spinner)view.findViewById(R.id.spinner_profilelist_alertdialog_create_edit_schedule);
-        startTimePicker = (TimePicker)view.findViewById(R.id.timePicker_start_alertdialog_create_edit_schedule);
-        endTimePicker = (TimePicker)view.findViewById(R.id.timePicker_end_alertdialog_create_edit_schedule);
-        checkBoxDay[0] = (CheckBox)view.findViewById(R.id.checkBox_monday_alertdialog_create_edit_schedule);
-        checkBoxDay[1] = (CheckBox)view.findViewById(R.id.checkBox_tuesday_alertdialog_create_edit_schedule);
-        checkBoxDay[2] = (CheckBox)view.findViewById(R.id.checkBox_wednesday_alertdialog_create_edit_schedule);
-        checkBoxDay[3] = (CheckBox)view.findViewById(R.id.checkBox_thursday_alertdialog_create_edit_schedule);
-        checkBoxDay[4] = (CheckBox)view.findViewById(R.id.checkBox_friday_alertdialog_create_edit_schedule);
-        checkBoxDay[5] = (CheckBox)view.findViewById(R.id.checkBox_saturday_alertdialog_create_edit_schedule);
-        checkBoxDay[6] = (CheckBox)view.findViewById(R.id.checkBox_sunday_alertdialog_create_edit_schedule);
-        checkBoxDay[getArguments().getInt(DAY_OF_WEEK)].setChecked(true);
-        for(int index=0; index<7; index++)
-        {
-            checkBoxDay[index].setEnabled(false);
-        }
-
-        ProfileListViewAdapter profileListViewAdapter = new ProfileListViewAdapter(context, profileDBDataSource.getProfileList());
-        spinner.setAdapter(profileListViewAdapter);
-        spinner.setOnItemSelectedListener(this);
-        startTimePicker.setIs24HourView(DateFormat.is24HourFormat(context));
-        endTimePicker.setIs24HourView(DateFormat.is24HourFormat(context));
-        startTimePicker.setCurrentHour(oldSchedule.START_HOUR);
-        startTimePicker.setCurrentMinute(oldSchedule.START_MINUTE);
-        endTimePicker.setCurrentHour(oldSchedule.END_HOUR);
-        endTimePicker.setCurrentMinute(oldSchedule.END_MINUTE);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setView(view);
-        alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which)
-            {
-                newSchedule.PROFILE_NAME = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_NAME;
-                newSchedule.PROFILE_ICON = profileDBDataSource.getProfileList().get(spinnerPosition).PROFILE_ICON;
-                newSchedule.START_HOUR = startTimePicker.getCurrentHour();
-                newSchedule.START_MINUTE = startTimePicker.getCurrentMinute();
-                newSchedule.END_HOUR = endTimePicker.getCurrentHour();
-                newSchedule.END_MINUTE = endTimePicker.getCurrentMinute();
-                newSchedule.DAY_OF_WEEK = getArguments().getInt(DAY_OF_WEEK);
-                scheduleDBDataSource.deleteSchedule(oldSchedule);
-
-                switch(scheduleDBDataSource.checkIfValidSchedule(newSchedule))
-                {
-                    case 0:
-                    {
-                        scheduleDBDataSource.createSchedule(newSchedule);
-
-                        Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                        serviceIntent.putExtra("cancel_alarms", true);
-                        context.startService(serviceIntent);
-
-                        onResume();
-                        dialogInterface.cancel();
-                        break;
-                    }
-                    case 1:
-                    {
-                        Toast.makeText(context, "Schedule not saved.  Start time cannot be later than or equal to end time", Toast.LENGTH_SHORT).show();
-                        scheduleDBDataSource.createSchedule(oldSchedule);
-
-                        dialogInterface.cancel();
-                        break;
-                    }
-                    case 2:
-                    {
-                        Toast.makeText(context, "Schedule not saved. One or more existing schedules overlap with this one.", Toast.LENGTH_SHORT).show();
-                        scheduleDBDataSource.createSchedule(oldSchedule);
-
-                        dialogInterface.cancel();
-                        break;
-                    }
-                }
-            }
-        });
-        alertDialogBuilder.setNegativeButton("Delete", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which)
-            {
-                scheduleDBDataSource.deleteSchedule(list.get(position));
-
-                list = scheduleDBDataSource.getScheduleList(getArguments().getInt(DAY_OF_WEEK));
-                scheduleListViewAdapter = new ScheduleListViewAdapter(context, list);
-                listViewSchedule.setAdapter(scheduleListViewAdapter);
-
-                Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                serviceIntent.putExtra("cancel_alarms", true);
-                context.startService(serviceIntent);
-
                 dialogInterface.cancel();
             }
         });

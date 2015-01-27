@@ -11,16 +11,25 @@ import java.util.List;
 
 import prototyped.schedulr.R;
 import prototyped.schedulr.database.Event;
+import prototyped.schedulr.database.ProfileDBDataSource;
 
 public class EventListViewAdapter extends BaseAdapter
 {
     private List<Event> list;
     private Context context;
+    private ProfileDBDataSource profileDBDataSource;
 
     public EventListViewAdapter(Context context, List<Event> list)
     {
         this.context = context;
         this.list = list;
+        profileDBDataSource = new ProfileDBDataSource(context);
+        profileDBDataSource.open();
+    }
+
+    public void close()
+    {
+        profileDBDataSource.close();
     }
 
     @Override
@@ -45,6 +54,7 @@ public class EventListViewAdapter extends BaseAdapter
     public View getView(int position, View view, ViewGroup viewGroup)
     {
         ViewHolder holder;
+        TextView textViewIcon;
         TextView textViewTitle;
         TextView textViewStartTime;
         TextView textViewDate;
@@ -54,14 +64,17 @@ public class EventListViewAdapter extends BaseAdapter
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item_fragment_events, viewGroup, false);
+            textViewIcon = (TextView)view.findViewById(R.id.textView_icon_list_item_fragment_events);
             textViewTitle = (TextView)view.findViewById(R.id.textView_title_list_item_fragment_events);
             textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_events);
             textViewDate = (TextView)view.findViewById(R.id.textView_date_list_item_fragment_events);
 
-            textViewTitle.setText(list.get(position).EVENT_TITLE);
-            textViewStartTime.setText(getTimeStamp(list.get(position).EVENT_START_HOUR, list.get(position).EVENT_START_MINUTE));
-            textViewDate.setText(getDateStamp(list.get(position).EVENT_DAY_OF_MONTH, list.get(position).EVENT_MONTH, list.get(position).EVENT_YEAR));
+            textViewIcon.setBackgroundResource(profileDBDataSource.getProfile(list.get(position).PROFILE_NAME).PROFILE_ICON);
+            textViewTitle.setText(list.get(position).TITLE);
+            textViewStartTime.setText(getTimeStamp(list.get(position).START_HOUR, list.get(position).START_MINUTE));
+            textViewDate.setText(getDateStamp(list.get(position).DAY_OF_MONTH, list.get(position).MONTH, list.get(position).YEAR));
 
+            holder.textViewIcon = textViewIcon;
             holder.textViewTitle = textViewTitle;
             holder.textViewStartTime = textViewStartTime;
             holder.textViewDate = textViewDate;
@@ -72,10 +85,12 @@ public class EventListViewAdapter extends BaseAdapter
         {
             holder = (ViewHolder)view.getTag();
 
+            textViewIcon = (TextView)view.findViewById(R.id.textView_icon_list_item_fragment_events);
             textViewTitle = (TextView)view.findViewById(R.id.textView_title_list_item_fragment_events);
             textViewStartTime = (TextView)view.findViewById(R.id.textView_start_time_list_item_fragment_events);
             textViewDate = (TextView)view.findViewById(R.id.textView_date_list_item_fragment_events);
 
+            textViewIcon = holder.textViewIcon;
             textViewTitle = holder.textViewTitle;
             textViewStartTime = holder.textViewStartTime;
             textViewDate = holder.textViewDate;
@@ -165,19 +180,19 @@ public class EventListViewAdapter extends BaseAdapter
 
         if(dayOfMonth%10 == 1)
         {
-            s= s + dayOfMonth + "st " + monthNames[month-1] + ", " + year;
+            s= s + dayOfMonth + "st " + monthNames[month] + ", " + year;
         }
         else if(dayOfMonth%10 == 2)
         {
-            s= s + dayOfMonth + "nd " + monthNames[month-1] + ", " + year;
+            s= s + dayOfMonth + "nd " + monthNames[month] + ", " + year;
         }
         else if(dayOfMonth%10 == 3)
         {
-            s= s + dayOfMonth + "rd " + monthNames[month-1] + ", " + year;
+            s= s + dayOfMonth + "rd " + monthNames[month] + ", " + year;
         }
         else
         {
-            s= s + dayOfMonth + "th " + monthNames[month-1] + ", " + year;
+            s= s + dayOfMonth + "th " + monthNames[month] + ", " + year;
         }
 
         return  s;
@@ -185,6 +200,7 @@ public class EventListViewAdapter extends BaseAdapter
 
     static class ViewHolder
     {
+        TextView textViewIcon;
         TextView textViewTitle;
         TextView textViewStartTime;
         TextView textViewDate;

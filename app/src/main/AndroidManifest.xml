@@ -28,22 +28,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ActivityProfileCreateEdit"
+            android:name=".activity.ActivityProfileEditor"
             android:configChanges="keyboardHidden|layoutDirection|orientation|screenLayout"/>
         <activity
             android:name=".activity.ActivityEventEditor"
+            android:configChanges="keyboardHidden|layoutDirection|orientation|screenLayout"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity
+            android:name=".activity.ActivityScheduleEditor"
             android:configChanges="keyboardHidden|layoutDirection|orientation|screenLayout"/>
-
         <service
             android:name=".activity.ServiceProfileScheduler"
             android:icon="@drawable/ic_launcher"
             android:label="Schedulr"
             android:enabled="true"/>
         <receiver
-            android:name=".activity.BroadcastReceiverScheduleAlarms"
-            android:enabled="true" />
-        <receiver
-            android:name=".activity.BroadcastReceiverServiceAlarms"
+            android:name=".activity.BroadcastReceiverAlarms"
             android:enabled="true" />
     </application>
 </manifest>

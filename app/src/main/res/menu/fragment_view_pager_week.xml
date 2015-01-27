@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_add_schedule_fragment_schedule"
+        android:id="@+id/action_add_schedule_fragment_view_pager_week"
         android:icon="@drawable/ic_action_new"
         android:title="Add schedule"
         app:showAsAction="always"

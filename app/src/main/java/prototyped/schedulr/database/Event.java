@@ -2,36 +2,36 @@ package prototyped.schedulr.database;
 
 public class Event
 {
-    public long EVENT_ID;
-    public String EVENT_TITLE;
-    public String EVENT_NOTE;
-    public String EVENT_PROFILE_NAME;
-    public int EVENT_START_HOUR;
-    public int EVENT_START_MINUTE;
-    public int EVENT_END_HOUR;
-    public int EVENT_END_MINUTE;
-    public int EVENT_DAY_OF_MONTH;
-    public int EVENT_MONTH;
-    public int EVENT_YEAR;
-    public float EVENT_LATITUDE;
-    public float EVENT_LONGITUDE;
-    public int EVENT_FLAG_LOCATION_SET;
+    public long ID;
+    public String TITLE;
+    public String NOTE;
+    public String PROFILE_NAME;
+    public int START_HOUR;
+    public int START_MINUTE;
+    public int END_HOUR;
+    public int END_MINUTE;
+    public int DAY_OF_MONTH;
+    public int MONTH;
+    public int YEAR;
+    public float LATITUDE;
+    public float LONGITUDE;
+    public int FLAG_LOCATION_SET;
 
     public Event()
     {
-        this.EVENT_ID = 0;
-        this.EVENT_TITLE = "";
-        this.EVENT_NOTE = "";
-        this.EVENT_PROFILE_NAME = "";
-        this.EVENT_START_HOUR = 0;
-        this.EVENT_START_MINUTE = 0;
-        this.EVENT_END_HOUR  = 0;
-        this.EVENT_END_MINUTE = 0;
-        this.EVENT_DAY_OF_MONTH = 0;
-        this.EVENT_MONTH = 0;
-        this.EVENT_YEAR = 0;
-        this.EVENT_LATITUDE = 0;
-        this.EVENT_LONGITUDE = 0;
-        this.EVENT_FLAG_LOCATION_SET = 0;
+        this.ID = 0;
+        this.TITLE = "";
+        this.NOTE = "";
+        this.PROFILE_NAME = "";
+        this.START_HOUR = 7;
+        this.START_MINUTE = 0;
+        this.END_HOUR = 8;
+        this.END_MINUTE = 0;
+        this.DAY_OF_MONTH = 0;
+        this.MONTH = 0;
+        this.YEAR = 0;
+        this.LATITUDE = 0;
+        this.LONGITUDE = 0;
+        this.FLAG_LOCATION_SET = 0;
     }
 }

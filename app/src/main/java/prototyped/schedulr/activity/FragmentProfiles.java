@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +21,7 @@ import java.util.List;
 
 import prototyped.schedulr.R;
 import prototyped.schedulr.adapter.ProfileListViewAdapter;
+import prototyped.schedulr.database.EventDBDataSource;
 import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 import prototyped.schedulr.database.ScheduleDBDataSource;
@@ -29,13 +29,13 @@ import prototyped.schedulr.database.ScheduleDBDataSource;
 public class FragmentProfiles extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
     private static final String NAVIGATION_DRAWER_POSITION = "position";
+    private static Context context;
     private ProfileDBDataSource profileDBDataSource;
     private ScheduleDBDataSource scheduleDBDataSource;
+    private EventDBDataSource eventDBDataSource;
     private List<Profile> list;
-    private static Context context;
-    private int position;
-    private AlertDialog alertDialogDelete;
-    private ProfileListViewAdapter adapter;
+    private int longClickPosition;
+
     private ListView listView;
 
     public static final FragmentProfiles newInstance(Context c, int position)
@@ -52,19 +52,19 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         setHasOptionsMenu(true);
-        alertDialogDelete = alertDialogDelete();
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
         scheduleDBDataSource = new ScheduleDBDataSource(context);
         scheduleDBDataSource.open();
+        eventDBDataSource = new EventDBDataSource(context);
+        eventDBDataSource.open();
         list=profileDBDataSource.getProfileList();
 
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
-        adapter = new ProfileListViewAdapter(getActivity(), list);
         listView = (ListView)rootView.findViewById(R.id.listView_fragment_profiles);
+        listView.setAdapter(new ProfileListViewAdapter(context, profileDBDataSource.getProfileList()));
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
-        listView.setAdapter(adapter);
 
         return rootView;
     }
@@ -73,6 +73,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
+
         ((ActivityMain)activity).onSectionAttached(getArguments().getInt(NAVIGATION_DRAWER_POSITION));
     }
 
@@ -82,6 +83,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
         profileDBDataSource.open();
         scheduleDBDataSource.open();
+        eventDBDataSource.open();
     }
 
     public void onPause()
@@ -90,6 +92,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
 
         profileDBDataSource.close();
         scheduleDBDataSource.close();
+        eventDBDataSource.close();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
@@ -104,8 +107,8 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
         {
             case R.id.action_add_profile_fragment_profiles:
             {
-                Intent intent = new Intent(context, ActivityProfileCreateEdit.class);
-                intent.putExtra("flag_new_profile", true);
+                Intent intent = new Intent(context, ActivityProfileEditor.class);
+                intent.putExtra("new_profile", true);
                 startActivity(intent);
                 getActivity().finish();
 
@@ -119,9 +122,9 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        Intent intent = new Intent(context, ActivityProfileCreateEdit.class);
+        Intent intent = new Intent(context, ActivityProfileEditor.class);
         intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
-        intent.putExtra("flag_new_profile", false);
+        intent.putExtra("new_profile", false);
         startActivity(intent);
         getActivity().finish();
     }
@@ -129,8 +132,8 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        this.position = position;
-        alertDialogDelete.show();
+        this.longClickPosition = position;
+        alertDialogDelete().show();
 
         return true;
     }
@@ -138,7 +141,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     private AlertDialog alertDialogDelete()
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder((getActivity()));
-        alertDialogBuilder.setMessage("Delete this profile? All schedules using this profile will be deleted as well.");
+        alertDialogBuilder.setMessage("Delete this profile? All schedules and events using this profile will be deleted as well.");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
         {
             @Override
@@ -146,21 +149,22 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
             {
                 dialogInterface.cancel();
 
-                if(list.get(position).PROFILE_NAME.trim().equals("Default"))
+                if(list.get(longClickPosition).PROFILE_NAME.trim().equals("Default"))
                 {
-                    Log.d("profile name", list.get(position).PROFILE_NAME);
                     Toast.makeText(context, "Cannot delete default profile", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    scheduleDBDataSource.deleteSchedule(list.get(position).PROFILE_NAME.toString());
-                    profileDBDataSource.deleteProfile(list.get(position).PROFILE_NAME.toString());
-                    list = profileDBDataSource.getProfileList();
-                    adapter = new ProfileListViewAdapter(getActivity(), list);
-                    listView.setAdapter(adapter);
-
                     Intent serviceIntent = new Intent(context, ServiceProfileScheduler.class);
-                    serviceIntent.putExtra("cancel_alarms", true);
+                    context.startService(serviceIntent);
+
+                    eventDBDataSource.deleteEvent(list.get(longClickPosition).PROFILE_NAME.toString());
+                    scheduleDBDataSource.deleteSchedule(list.get(longClickPosition).PROFILE_NAME.toString());
+                    profileDBDataSource.deleteProfile(list.get(longClickPosition).PROFILE_NAME.toString());
+                    list = profileDBDataSource.getProfileList();
+                    listView.setAdapter(new ProfileListViewAdapter(getActivity(), list));
+
+                    serviceIntent = new Intent(context, ServiceProfileScheduler.class);
                     context.startService(serviceIntent);
                 }
             }

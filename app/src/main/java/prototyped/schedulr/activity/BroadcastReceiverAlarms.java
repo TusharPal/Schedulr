@@ -6,11 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,13 +23,14 @@ import prototyped.schedulr.database.Profile;
 import prototyped.schedulr.database.ProfileDBDataSource;
 import prototyped.schedulr.database.ScheduleDBDataSource;
 
-public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
+public class BroadcastReceiverAlarms extends BroadcastReceiver
 {
     private Context context;
     private ProfileDBDataSource profileDBDataSource;
     private ScheduleDBDataSource scheduleDBDataSource;
     private Profile profile;
     private Intent intent;
+    private long scheduleId;
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -39,7 +43,11 @@ public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
         scheduleDBDataSource.open();
         profile = profileDBDataSource.getProfile(intent.getExtras().getString("profile_name"));
 
-        if(intent.getExtras().getBoolean("is_schedule"))
+        if(intent.getExtras().getBoolean("is_service_intent"))
+        {
+            context.startService(new Intent(context, ServiceProfileScheduler.class));
+        }
+        else if(intent.getExtras().getBoolean("is_schedule"))
         {
             if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false))
             {
@@ -52,17 +60,16 @@ public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
         }
         else
         {
-            if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false))
+            if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false) && (intent.getExtras().getLong("event_id") == PreferenceManager.getDefaultSharedPreferences(context).getLong("event_ongoing_id", 0)))
             {
-                if(intent.getExtras().getString("profile_name").equals("Default"))
-                {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", false).apply();
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", false).apply();
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putLong("event_ongoing_id", 0).apply();
 
-                    context.startService(new Intent(context, ServiceProfileScheduler.class));
-                }
-                else
+                scheduleId = scheduleDBDataSource.getCurrentSchedule();
+                Log.d("schedule Id", Long.toString(scheduleId));
+                if(scheduleId != -1)
                 {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", true).apply();
+                    profile = profileDBDataSource.getProfile(scheduleDBDataSource.getSchedule(scheduleId).PROFILE_NAME);
                 }
 
                 setDisplayParameters();
@@ -74,6 +81,7 @@ public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
             else
             {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", true).apply();
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putLong("event_ongoing_id", intent.getExtras().getLong("event_id")).apply();
 
                 setDisplayParameters();
                 setAudioParameters();
@@ -124,8 +132,8 @@ public class BroadcastReceiverScheduleAlarms extends BroadcastReceiver
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, (audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)*profile.SOUND_VOLUME_APPLICATION)/10, 0);
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, (audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)*profile.SOUND_VOLUME_ALARM)/10, 0);
 
-//        RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, Uri.parse(profile.SOUND_RINGTONE));
-//        RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(profile.SOUND_NOTIFICATION_TONE));
+        RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, Uri.parse(profile.SOUND_RINGTONE));
+        RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(profile.SOUND_NOTIFICATION_TONE));
 
         audioManager.setRingerMode(profile.SOUND_RING_MODE);
     }
