@@ -67,7 +67,11 @@ public class BroadcastReceiverAlarms extends BroadcastReceiver
 
                 scheduleId = scheduleDBDataSource.getCurrentSchedule();
                 Log.d("schedule Id", Long.toString(scheduleId));
-                if(scheduleId != -1)
+                if(scheduleId == -1)
+                {
+                    profile = profileDBDataSource.getProfile("Default");
+                }
+                else
                 {
                     profile = profileDBDataSource.getProfile(scheduleDBDataSource.getSchedule(scheduleId).PROFILE_NAME);
                 }

@@ -123,7 +123,7 @@ public class FragmentProfiles extends Fragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
         Intent intent = new Intent(context, ActivityProfileEditor.class);
-        intent.putExtra("search_profile_name", list.get(position).PROFILE_NAME.toString());
+        intent.putExtra("profile_name", list.get(position).PROFILE_NAME.toString());
         intent.putExtra("new_profile", false);
         startActivity(intent);
         getActivity().finish();
