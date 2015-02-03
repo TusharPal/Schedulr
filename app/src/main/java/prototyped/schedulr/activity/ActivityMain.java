@@ -13,7 +13,7 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private FragmentManager fragmentManager;
     private CharSequence mTitle;
-    private String navigationDrawerItems[] = {"Schedule", "Events", "Profiles"};
+    private String navigationDrawerItems[] = {"Schedule", "Events", "Profiles", "Help"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,6 +58,12 @@ public class ActivityMain extends ActionBarActivity implements NavigationDrawerF
             case 2:
             {
                 fragmentManager.beginTransaction().replace(R.id.container, FragmentProfiles.newInstance(getApplicationContext(), position)).commit();
+
+                break;
+            }
+            case 3:
+            {
+                fragmentManager.beginTransaction().replace(R.id.container, FragmentHelpViewPager.newInstance(getApplicationContext(), position)).commit();
 
                 break;
             }
