@@ -18,16 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import prototyped.schedulr.R;
+import prototyped.schedulr.adapter.NavigationDrawerListAdapter;
 
 public class NavigationDrawerFragment extends Fragment
 {
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-    private final String navigationDrawerItems[] = {"Schedule", "Events", "Profiles"};
+    private final String navigationDrawerItems[] = {"Schedule", "Events", "Profiles", "Help"};
+    private NavigationDrawerListAdapter navigationDrawerListAdapter;
     private NavigationDrawerCallbacks mCallbacks;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -66,9 +67,10 @@ public class NavigationDrawerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        navigationDrawerListAdapter = new NavigationDrawerListAdapter(getActivity().getApplicationContext(), navigationDrawerItems);
+        navigationDrawerListAdapter.setItemSelected(mCurrentSelectedPosition);
         mDrawerListView = (ListView)inflater.inflate(R.layout.fragment_navigation_drawer_activity_main, container, false);
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, navigationDrawerItems));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        mDrawerListView.setAdapter(navigationDrawerListAdapter);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -151,7 +153,9 @@ public class NavigationDrawerFragment extends Fragment
 
         if(mDrawerListView != null)
         {
-            mDrawerListView.setItemChecked(position, true);
+            navigationDrawerListAdapter.setItemSelected(position);
+            navigationDrawerListAdapter.notifyDataSetChanged();
+            mDrawerListView.invalidate();
         }
         if(mDrawerLayout != null)
         {

@@ -13,7 +13,6 @@ import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,19 +28,16 @@ public class BroadcastReceiverAlarms extends BroadcastReceiver
     private ProfileDBDataSource profileDBDataSource;
     private ScheduleDBDataSource scheduleDBDataSource;
     private Profile profile;
-    private Intent intent;
     private long scheduleId;
 
     @Override
     public void onReceive(Context context, Intent intent)
     {
         this.context = context;
-        this.intent = intent;
         profileDBDataSource = new ProfileDBDataSource(context);
         profileDBDataSource.open();
         scheduleDBDataSource = new ScheduleDBDataSource(context);
         scheduleDBDataSource.open();
-        profile = profileDBDataSource.getProfile(intent.getExtras().getString("profile_name"));
 
         if(intent.getExtras().getBoolean("is_service_intent"))
         {
@@ -51,22 +47,23 @@ public class BroadcastReceiverAlarms extends BroadcastReceiver
         {
             if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false))
             {
+                profile = profileDBDataSource.getProfile(intent.getExtras().getString("profile_name"));
+
                 setDisplayParameters();
                 setAudioParameters();
                 setWifi();
                 setMobileData();
-                setNotification();
+                setNotification(profile);
             }
         }
         else
         {
-            if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("event_ongoing", false) && (intent.getExtras().getLong("event_id") == PreferenceManager.getDefaultSharedPreferences(context).getLong("event_ongoing_id", 0)))
+            if((intent.getExtras().getLong("event_id") == PreferenceManager.getDefaultSharedPreferences(context).getLong("event_ongoing_id", 0)))
             {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", false).apply();
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putLong("event_ongoing_id", 0).apply();
 
                 scheduleId = scheduleDBDataSource.getCurrentSchedule();
-                Log.d("schedule Id", Long.toString(scheduleId));
                 if(scheduleId == -1)
                 {
                     profile = profileDBDataSource.getProfile("Default");
@@ -80,31 +77,33 @@ public class BroadcastReceiverAlarms extends BroadcastReceiver
                 setAudioParameters();
                 setWifi();
                 setMobileData();
-                setNotification();
+                setNotification(profile);
             }
             else
             {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("event_ongoing", true).apply();
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putLong("event_ongoing_id", intent.getExtras().getLong("event_id")).apply();
+                profile = profileDBDataSource.getProfile("Default");
 
                 setDisplayParameters();
                 setAudioParameters();
                 setWifi();
                 setMobileData();
-                setNotification();
+                setNotification(profile);
             }
         }
 
         profileDBDataSource.close();
+        scheduleDBDataSource.close();
     }
 
-    private void setNotification()
+    private void setNotification(Profile profile)
     {
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Schedulr")
-                .setContentText(intent.getExtras().getString("profile_name"))
+                .setContentText(profile.PROFILE_NAME)
                 .setAutoCancel(false);
         Notification notification = notificationBuilder.build();
         notification.flags = Notification.FLAG_NO_CLEAR;

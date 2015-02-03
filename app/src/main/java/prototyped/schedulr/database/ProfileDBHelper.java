@@ -61,9 +61,9 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                             + 5 + ","
                                                             + "\"\"" + ","
                                                             + "\"\"" + ","
-                                                            + 2 + ","
+                                                            + 1 + ","
                                                             + 0 + ","
-                                                            + 1 + ");");
+                                                            + 0 + ");");
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
                                                             + "\"Silent\"" + ","
                                                             + R.drawable.ic_profile_05 + ","
@@ -89,7 +89,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper
                                                             + 10 + ","
                                                             + "\"\"" + ","
                                                             + "\"\"" + ","
-                                                            + 2 + ","
+                                                            + 1 + ","
                                                             + 1 + ","
                                                             + 0 + ");");
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES("
